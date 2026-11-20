@@ -1,0 +1,764 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>لوّنها</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Aref+Ruqaa:wght@700&family=Aref+Ruqaa+Ink:wght@700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Readex+Pro:wght@300;400;600&display=swap">
+<style>
+/* Layout: two stages in one page. "Make" is a form beside a book summary; "Play" is the recipient's colouring desk with a locked last page. */
+:root{
+  --bg:#F5F2F4; --surface:#FFFFFF; --fg:#241A2B; --muted:#6A5E72; --line:#E2D9E4;
+  --accent:#8E2C57; --accent-fg:#FFFFFF; --ink:#17152B; --gold:#C9962B;
+  --display:"Reem Kufi","Readex Pro",system-ui,sans-serif; --script:"Aref Ruqaa","Reem Kufi",serif;
+  --body:"Readex Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1A1420; --surface:#251C2D; --fg:#F1E9F4; --muted:#B5A8BD; --line:#3C2F46;
+  --accent:#E07AA6; --accent-fg:#2A0F1C; --gold:#E3B755; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1A1420; --surface:#251C2D; --fg:#F1E9F4; --muted:#B5A8BD; --line:#3C2F46;
+  --accent:#E07AA6; --accent-fg:#2A0F1C; --gold:#E3B755; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0}
+body{background:var(--bg);color:var(--fg);font:400 15px/1.6 var(--body);
+  padding-block:18px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+[hidden]{display:none!important}
+#app{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font:700 2rem/1 var(--display)}
+.tabs{display:flex;gap:8px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 16px;font-weight:600}
+.pill[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.hero h1{font:700 clamp(1.6rem,5vw,2.4rem)/1.3 var(--display);margin:0 0 6px;text-wrap:balance}
+.hero p{margin:0;color:var(--muted);max-width:64ch}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:900px){.grid{grid-template-columns:minmax(0,1fr) minmax(0,380px);align-items:start}}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lbl{font-size:.82rem;color:var(--muted);font-weight:600}
+.in{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{background:var(--accent);color:var(--accent-fg);border:0;border-radius:12px;padding:11px 18px;font-weight:600}
+.btn.alt{background:var(--bg);color:var(--fg);border:1px solid var(--line)}
+.btn[disabled]{opacity:.5;cursor:default}
+h2.sec{font:700 1.2rem var(--display);margin:0}
+.steps{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.steps li{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.92rem}
+.steps b{color:var(--fg)}
+.dot{flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.stage{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:900px){.stage{grid-template-columns:minmax(0,620px) minmax(0,1fr);align-items:start}}
+.paper{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(36,26,43,.14)}
+.paper canvas{display:block;width:100%;height:auto;aspect-ratio:1;touch-action:manipulation;cursor:crosshair}
+.cap{font:700 1.35rem/1.5 var(--script);text-align:center;padding:12px 4px 2px;text-wrap:balance}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:700;position:relative}
+.nav button[aria-current="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.nav button.done::after{content:"";position:absolute;inset-block-start:-3px;inset-inline-end:-3px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.nav button.lock{font-size:.8rem}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.pal{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:34px;height:34px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--accent)}
+.sw.er{background:repeating-linear-gradient(45deg,var(--bg) 0 5px,var(--line) 5px 10px)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:.9rem}
+.lockp{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:40px 20px;min-height:300px;justify-content:center}
+.lockp .big{font:700 1.6rem var(--display)}
+.reveal{position:relative;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,#3A0D2A,#1B0A25);color:#FFF3F6;min-height:460px;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.reveal canvas{position:absolute;inset:0;width:100%;height:100%}
+.reveal .msg{position:relative;display:flex;flex-direction:column;gap:14px;align-items:center}
+.reveal .to{font:500 1.1rem var(--display);color:#F3C6D6;letter-spacing:.04em}
+.reveal .txt{font:700 clamp(2rem,7vw,3.4rem)/1.3 var(--script);text-wrap:balance;min-height:1.3em}
+.reveal .by{font:500 1.2rem var(--display);color:#F3C6D6}
+.modal{position:fixed;inset:0;background:rgba(10,9,25,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.sheet{background:var(--surface);border-radius:18px;padding:16px;max-width:420px;width:100%;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.sheet video{width:100%;max-height:60vh;border-radius:10px;background:#000}
+.sheet p{margin:0;color:var(--muted);font-size:.88rem}
+a.btn{text-decoration:none;text-align:center;display:block}
+.recv .tabs,.recv .hero,.recv #make,.recv #payBar{display:none!important}
+/* ===== Recipient luxury theme: maroon + gold, same world as the intro ===== */
+body.recvb{--bg:#1E0A18;--surface:#2B1022;--fg:#F6EBD3;--muted:#CDB48A;--line:rgba(201,162,75,.38);--accent:#C9A24B;--accent-fg:#2B0A1E;color-scheme:dark;
+  background:radial-gradient(120% 70% at 50% 0%,#4E1233 0%,#2B0A1E 45%,#170713 100%) fixed}
+.recv .logo{font:700 2rem/1 var(--script);background:linear-gradient(100deg,#9A7424,#F6DE9A 40%,#C9A24B 60%,#F6DE9A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.recv .pill{background:transparent;border-color:rgba(201,162,75,.5);color:#F6DE9A}
+.recv .nav button{background:transparent;color:#F6DE9A;border:1px solid rgba(201,162,75,.55)}
+.recv .nav button[aria-current="true"]{background:linear-gradient(160deg,#F6DE9A,#B98B2E);color:#2B0A1E;border-color:#F6DE9A;box-shadow:0 0 14px rgba(201,162,75,.45)}
+.recv .nav button.done::after{background:#F6DE9A;border-color:#2B0A1E}
+.recv .paper{position:relative;border:2px solid transparent;border-radius:4px;border-image:linear-gradient(135deg,#8A6420,#F6DE9A 25%,#B98B2E 50%,#F6DE9A 75%,#8A6420) 1;outline:1px solid rgba(201,162,75,.55);outline-offset:6px;box-shadow:0 0 0 6px rgba(0,0,0,0),0 14px 40px rgba(0,0,0,.5),0 0 40px rgba(201,162,75,.12);background:#FFFDF8;margin:8px 6px}
+.recv .cap{font:700 1.5rem/1.6 "Aref Ruqaa Ink","Aref Ruqaa",serif;color:#F6DE9A;padding-top:16px}
+.recv .box{background:rgba(43,16,34,.78);border:1px solid rgba(201,162,75,.4);border-radius:6px;box-shadow:inset 0 0 40px rgba(201,162,75,.05)}
+.recv .lbl{color:#CDB48A}
+.recv .bar{background:rgba(201,162,75,.2)}.recv .bar i{background:linear-gradient(90deg,#B98B2E,#F6DE9A)}
+.recv .sw{border-color:#2B1022;box-shadow:0 0 0 1px rgba(201,162,75,.5)}
+.recv .sw[aria-pressed="true"]{box-shadow:0 0 0 3px #F6DE9A}
+.recv .btn{background:linear-gradient(180deg,#F0D58B,#B98B2E);color:#2B0A1E;border:0;border-radius:99px;font-weight:700}
+.recv .btn.alt{background:transparent;color:#F6DE9A;border:1px solid rgba(201,162,75,.6)}
+.recv #rnd{display:none!important}
+.recv .lockp .big{font:700 1.7rem "Aref Ruqaa Ink","Aref Ruqaa",serif;color:#F6DE9A}
+.recv .reveal{position:relative;border-radius:4px;background:radial-gradient(120% 90% at 50% 15%,#5A1436,#2B0A1E 55%,#14060F);border:2px solid transparent;border-image:linear-gradient(135deg,#8A6420,#F6DE9A 25%,#B98B2E 50%,#F6DE9A 75%,#8A6420) 1;outline:1px solid rgba(201,162,75,.5);outline-offset:6px;margin:8px 6px;box-shadow:0 0 50px rgba(201,162,75,.14)}
+.recv .reveal::before{content:"";position:absolute;inset:11px;border:1px solid rgba(201,162,75,.6);pointer-events:none;z-index:1}
+.recv .reveal .to{font:500 1.05rem "Reem Kufi",var(--display);color:#CDB48A;letter-spacing:0}
+.recv .reveal .txt{font:700 clamp(1.8rem,6.5vw,3rem)/1.55 "Aref Ruqaa Ink","Aref Ruqaa",serif;background:linear-gradient(100deg,#B98B2E,#F6DE9A 35%,#E8C874 60%,#F6DE9A);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 12px rgba(201,162,75,.3))}
+.recv .reveal .by{font:400 1.2rem "Amiri",serif;color:#E8C874}
+.recv .sheet{background:#2B1022;border:1px solid rgba(201,162,75,.5);color:#F6EBD3}
+.recv .in{background:#1E0A18}
+.intro{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) max(20px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));background:radial-gradient(120% 90% at 50% 20%,#5A1436 0%,#2B0A1E 55%,#14060F 100%);color:#F6E7C1;overflow:auto;animation:introIn .8s ease both}
+.intro[hidden]{display:none}
+@keyframes introIn{from{opacity:0}to{opacity:1}}
+.intro .frame{position:relative;width:min(540px,100%);padding:64px 34px 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px;border:2px solid transparent;border-image:linear-gradient(135deg,#8A6420,#F6DE9A 25%,#B98B2E 50%,#F6DE9A 75%,#8A6420) 1;outline:1px solid rgba(201,162,75,.6);outline-offset:9px;box-shadow:0 0 0 9px rgba(0,0,0,0),inset 0 0 70px rgba(201,162,75,.10),0 0 50px rgba(201,162,75,.14);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0))}
+.intro .frame .in1{position:absolute;inset:12px;border:1px solid rgba(201,162,75,.75);pointer-events:none}
+.intro .frame .in2{position:absolute;inset:19px;border:1px dotted rgba(201,162,75,.55);pointer-events:none}
+.intro .frame .c{position:absolute;width:92px;height:92px;pointer-events:none;overflow:visible}
+.intro .frame .c.tl{top:-14px;left:-14px}.intro .frame .c.tr{top:-14px;right:-14px;transform:scaleX(-1)}
+.intro .frame .c.bl{bottom:-14px;left:-14px;transform:scaleY(-1)}.intro .frame .c.br{bottom:-14px;right:-14px;transform:scale(-1,-1)}
+.intro .frame .crest{position:absolute;top:-17px;left:50%;transform:translateX(-50%);width:150px;height:34px;pointer-events:none}
+.intro .frame .crest.b{top:auto;bottom:-17px;transform:translateX(-50%) scaleY(-1)}
+.gold{background:linear-gradient(100deg,#9A7424 0%,#F6DE9A 30%,#C9A24B 50%,#F6DE9A 70%,#9A7424 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:foil 5s linear infinite}
+@keyframes foil{from{background-position:0 0}to{background-position:-220% 0}}
+.intro .t1{font:500 1.05rem "Reem Kufi",var(--display);letter-spacing:0;word-spacing:.15em}
+.intro .t1:lang(en){letter-spacing:.2em;text-transform:uppercase}
+.intro .t2{font:700 clamp(2.8rem,11vw,4.4rem)/1.3 "Aref Ruqaa Ink","Aref Ruqaa",var(--script);filter:drop-shadow(0 2px 14px rgba(201,162,75,.35))}
+.intro .t3{font:400 clamp(1.5rem,6vw,2.1rem)/1.5 "Amiri","Aref Ruqaa",serif;font-style:normal}
+.intro .orn{width:min(260px,70%);height:18px}
+.intro .open{background:linear-gradient(180deg,#E6C877,#B98B2E);color:#2B0A1E;border:0;border-radius:99px;padding:13px 34px;font:700 1.05rem var(--display);box-shadow:0 6px 24px rgba(201,162,75,.35)}
+@media (prefers-reduced-motion:reduce){.gold,.intro{animation:none}}
+footer a{color:var(--accent)}
+footer{color:var(--muted);font-size:.85rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div id="app" dir="rtl" lang="ar">
+  <div class="top">
+    <div class="logo" data-t="brand">لوّنها</div>
+    <div class="row">
+      <div class="tabs"><button class="pill" id="tMake" type="button" aria-pressed="true" data-t="tMake">أنا أهدي</button><button class="pill" id="tPlay" type="button" aria-pressed="false" data-t="tPlay">كيف تستلمه</button></div>
+      <button class="pill" id="mus" type="button" aria-pressed="false"></button>
+      <button class="pill" id="lang" type="button">English</button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <h1 data-t="h1">كتاب تلوين من قصتكم أنتم، وآخر صفحة فيه سر</h1>
+    <p data-t="sub">تجاوب على أسئلة بسيطة عن علاقتكم، فكل صفحة تصير مشهد من قصتكم للتلوين. هي تلوّن الكتاب على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما تخلّصه، وتلقى فيها رسالتك.</p>
+  </section>
+
+  <main id="make" class="grid">
+    <form class="box" id="f">
+      <div class="two">
+        <div class="f"><label class="lbl" for="to" data-t="to">اسمها</label><input class="in" id="to" maxlength="24"></div>
+        <div class="f"><label class="lbl" for="from" data-t="from">اسمك</label><input class="in" id="from" maxlength="24"></div>
+      </div>
+      <div id="qs" style="display:contents"></div>
+      <div class="f"><label class="lbl" for="ms" data-t="ms">الموسيقى اللي تحبها أثناء التلوين</label>
+        <select class="in" id="ms"><option value="off" data-t="mo_off">بدون موسيقى</option><option value="piano" data-t="mo_piano">بيانو هادئ</option><option value="oud" data-t="mo_oud">عود شرقي هادئ</option><option value="sea" data-t="mo_sea">أمواج البحر</option><option value="rain" data-t="mo_rain">مطر خفيف</option><option value="file" data-t="mo_file">أغنيتها المفضلة (ارفع ملف)</option></select>
+        <input class="in" id="song" type="file" accept="audio/*" hidden>
+        <div class="lbl" style="font-weight:400" data-t="songN">اختر الموسيقى اللي تحبها، وتشتغل لها أثناء التلوين ويقدر توقفها. لو رفعت أغنية تأكد أن عندك حق استخدامها.</div></div>
+      <div class="f"><label class="lbl" for="sec" data-t="sec">رسالة السر (تظهر لها في الصفحة الأخيرة)</label><input class="in" id="sec" maxlength="80"></div>
+      <div class="f"><label class="lbl" for="sig" data-t="sig">سطر ختام تكتبه بنفسك (اختياري)</label><input class="in" id="sig" maxlength="60"></div>
+      <div class="f"><label class="lbl" for="sa" data-t="sa">رسالة صوتية أو مقطع أغنية للصفحة الأخيرة (اختياري)</label>
+        <div class="row"><input class="in" id="sa" type="file" accept="audio/*" style="flex:1 1 180px"><button class="btn alt" id="rec" type="button"></button></div>
+        <div class="lbl" id="recS" style="font-weight:400" role="status"></div><audio id="sap" controls hidden style="width:100%"></audio>
+        <div class="lbl" style="font-weight:400" data-t="saN">تُشغَّل لها لما تنفتح الصفحة الأخيرة مع رسالتك. التسجيل المباشر يشتغل في الموقع بعد النشر، وإذا ما اشتغل ارفع ملف صوتي.</div></div>
+      <div class="f"><label class="lbl" for="em" data-t="em">بريدها الإلكتروني</label><input class="in" id="em" type="email" dir="ltr" placeholder="name@example.com"></div>
+      <button class="btn" id="go" type="submit" data-t="go">جهّز الكتاب وشوف كيف يوصلها</button>
+    </form>
+    <aside class="box">
+      <h2 class="sec" data-t="how">كيف يشتغل</h2>
+      <ol class="steps">
+        <li><span class="dot">1</span><span data-t="s1">تجاوب على ٦ أسئلة عن قصتكم، وتكتب رسالتك السرية.</span></li>
+        <li><span class="dot">2</span><span data-t="s2">يتجهّز كتاب من ٦ مشاهد مرسومة للتلوين، تحت كل مشهد جملة من قصتكم.</span></li>
+        <li><span class="dot">3</span><span data-t="s3">يوصلها رابط على بريدها، وتلوّن الكتاب على الجوال أو تطبعه.</span></li>
+        <li><span class="dot">4</span><span data-t="s4">لما تخلّص التلوين تنفتح الصفحة الأخيرة وتظهر رسالتك.</span></li>
+      </ol>
+      <div class="note" data-t="demoNote">هذي نسخة تجريبية. الرسومات هنا مرسومة بالكود، وفي النسخة الفعلية تُولَّد رسمة فنية لكل مشهد من تفاصيل قصتكم.</div>
+    </aside>
+  </main>
+
+  <div class="intro" id="intro" hidden role="dialog" aria-modal="true" aria-label="gift">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9A7424"/><stop offset=".35" stop-color="#F6DE9A"/><stop offset=".6" stop-color="#C9A24B"/><stop offset="1" stop-color="#F6DE9A"/></linearGradient></defs></svg>
+    <div class="frame"><span class="in1"></span><span class="in2"></span><svg class="c tl" viewBox="0 0 92 92" aria-hidden="true"><g fill="none" stroke="url(#gd)" stroke-linecap="round"><path d="M3 89V3H89" stroke-width="3.5"/><path d="M13 79V13H79" stroke-width="1.3"/><path d="M3 40A37 37 0 0 0 40 3" stroke-width="1.6"/><path d="M13 52A39 39 0 0 0 52 13" stroke-width="1.2"/><circle cx="62" cy="8" r="2.6" fill="url(#gd)" stroke="none"/><circle cx="8" cy="62" r="2.6" fill="url(#gd)" stroke="none"/></g></svg><svg class="c tr" viewBox="0 0 92 92" aria-hidden="true"><g fill="none" stroke="url(#gd)" stroke-linecap="round"><path d="M3 89V3H89" stroke-width="3.5"/><path d="M13 79V13H79" stroke-width="1.3"/><path d="M3 40A37 37 0 0 0 40 3" stroke-width="1.6"/><path d="M13 52A39 39 0 0 0 52 13" stroke-width="1.2"/><circle cx="62" cy="8" r="2.6" fill="url(#gd)" stroke="none"/><circle cx="8" cy="62" r="2.6" fill="url(#gd)" stroke="none"/></g></svg><svg class="c bl" viewBox="0 0 92 92" aria-hidden="true"><g fill="none" stroke="url(#gd)" stroke-linecap="round"><path d="M3 89V3H89" stroke-width="3.5"/><path d="M13 79V13H79" stroke-width="1.3"/><path d="M3 40A37 37 0 0 0 40 3" stroke-width="1.6"/><path d="M13 52A39 39 0 0 0 52 13" stroke-width="1.2"/><circle cx="62" cy="8" r="2.6" fill="url(#gd)" stroke="none"/><circle cx="8" cy="62" r="2.6" fill="url(#gd)" stroke="none"/></g></svg><svg class="c br" viewBox="0 0 92 92" aria-hidden="true"><g fill="none" stroke="url(#gd)" stroke-linecap="round"><path d="M3 89V3H89" stroke-width="3.5"/><path d="M13 79V13H79" stroke-width="1.3"/><path d="M3 40A37 37 0 0 0 40 3" stroke-width="1.6"/><path d="M13 52A39 39 0 0 0 52 13" stroke-width="1.2"/><circle cx="62" cy="8" r="2.6" fill="url(#gd)" stroke="none"/><circle cx="8" cy="62" r="2.6" fill="url(#gd)" stroke="none"/></g></svg>
+      <div class="t1 gold" data-t="introT">كتاب تلوين خاص</div>
+      <svg class="orn" viewBox="0 0 260 18" aria-hidden="true"><g fill="none" stroke="#C9A24B" stroke-width="1.5"><path d="M6 9H112M148 9H254"/><path d="M130 1l8 8-8 8-8-8z"/><circle cx="116" cy="9" r="2.5"/><circle cx="144" cy="9" r="2.5"/></g></svg>
+      <div class="t2 gold" id="inTo"></div>
+      <div class="t3 gold" id="inMsg" data-t="introM">هدية رقمية فيها قصتكم</div>
+      <button class="open" id="inOpen" type="button" data-t="introB">افتحي هديتك</button>
+    </div>
+  </div>
+  <div id="done" class="box" hidden style="align-items:center;text-align:center"><div class="big" id="doneT" style="font:700 1.3rem var(--display)"></div><div class="lbl" id="doneP"></div><div class="row" id="doneR" hidden style="justify-content:center;width:100%"><input class="in" id="doneL" readonly dir="ltr" style="max-width:420px"><button class="btn" id="doneC" type="button"></button></div></div>
+  <section id="play" hidden>
+    <div class="box" id="payBar" hidden style="margin-bottom:16px">
+      <label class="row" style="gap:8px;align-items:flex-start"><input type="checkbox" id="consent" style="margin-top:5px"><span><span data-t="consent">أوافق على</span> <a href="terms.html" target="_blank" rel="noopener" data-t="terms">الشروط</a> <span data-t="and">و</span> <a href="privacy.html" target="_blank" rel="noopener" data-t="privacy">سياسة الخصوصية</a></span></label>
+      <div class="row"><button class="btn" id="pay" type="button" data-t="pay">ادفع وأرسل لها</button><span class="lbl" data-t="payNote">بعد الدفع يوصلها رابط الكتاب على بريدها مباشرة.</span></div>
+      <div class="lbl" id="payS" role="status" style="color:var(--accent)"></div>
+    </div>
+    <div class="stage">
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+        <div class="nav" id="nav"></div>
+        <div id="page">
+          <div class="paper"><canvas id="cv" width="900" height="900"></canvas></div>
+          <div class="cap" id="cap"></div>
+        </div>
+        <div id="lockp" class="box lockp" hidden></div>
+        <div id="rev" class="reveal" hidden><canvas id="fx"></canvas><div class="msg"><div class="to" id="rTo"></div><div class="txt" id="rTxt"></div><div class="by" id="rBy"></div><audio id="rAud" controls hidden style="width:min(340px,100%)"></audio><button class="btn" id="clip" type="button" data-t="clip">حمّل المقطع (الكتابة مع الصوت)</button><div class="lbl" id="clipS" role="status" style="color:#F3C6D6"></div><button class="btn alt" id="pdf" type="button" hidden data-t="pdf">تحميل PDF للطباعة</button></div></div>
+      </div>
+      <div class="box" id="tools">
+        <div><div class="lbl" id="progL"></div><div class="bar"><i id="barI"></i></div></div>
+        <div class="lbl" data-t="colors">الألوان</div>
+        <div class="pal" id="pal"></div>
+        <div class="row">
+          <button class="btn alt" id="und" type="button" data-t="und">تراجع</button>
+          <button class="btn alt" id="rnd" type="button" data-t="rnd">لوّنها لي (للتجربة)</button>
+          <button class="btn alt" id="clr" type="button" data-t="clr">مسح</button>
+        </div>
+        <div class="row"><button class="btn alt" id="prev" type="button" data-t="prev">السابقة</button><button class="btn" id="next" type="button" data-t="next">التالية</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="gen" class="box" hidden style="align-items:center;text-align:center;padding:40px 20px"><div class="lbl" id="genT"></div><div class="bar" style="width:min(320px,100%)"><i id="genB"></i></div></div>
+  <div class="modal" id="clipM" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="big" style="font:700 1.2rem var(--display)" data-t="clipT">مقطعك جاهز</div><video id="clipV" controls playsinline></video><a class="btn" id="clipD" href="#" download data-t="dl">تنزيل</a><p data-t="clipH">في الموقع المنشور زر «تنزيل» يحفظ المقطع مباشرة. إذا ما اشتغل، اضغط مطولاً على الفيديو واختر حفظ.</p><button class="btn alt" id="clipX" type="button" data-t="cl">إغلاق</button></div></div>
+  <footer><span data-t="foot">التلوين يتم داخل متصفحك.</span> · <a href="terms.html" target="_blank" rel="noopener" data-t="terms">الشروط</a> · <a href="privacy.html" target="_blank" rel="noopener" data-t="privacy">سياسة الخصوصية</a></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var INK="#17152B",W=900,TH=.5;
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+/* ---------- line art: layered shapes filled white so front petals hide what is behind ---------- */
+function P(c,r,a){return[450+r*Math.sin(a),450-r*Math.cos(a)]}
+function ink(c){if(c._f==="e"){c.save();c.globalCompositeOperation="destination-out";c.fill();c.restore()}else if(c._f!==false)c.fill();c.stroke()}
+function lens(c,x,y,len,wd,ang){
+  c.save();c.translate(x,y);c.rotate(ang);c.beginPath();c.moveTo(0,0);
+  c.quadraticCurveTo(-wd*2,-len/2,0,-len);c.quadraticCurveTo(wd*2,-len/2,0,0);ink(c);c.restore();
+}
+function leaf(c,x,y,len,wd,ang){
+  lens(c,x,y,len,wd,ang);
+  c.save();c.translate(x,y);c.rotate(ang);c.beginPath();c.moveTo(0,-len*.06);c.lineTo(0,-len*.94);
+  for(var i=1;i<=3;i++){var yy=-len*(.2+i*.18),w=wd*(1.25-i*.22);c.moveTo(0,yy);c.lineTo(-w,yy-len*.1);c.moveTo(0,yy);c.lineTo(w,yy-len*.1)}
+  c.stroke();c.restore();
+}
+function circle(c,x,y,r){c.beginPath();c.arc(x,y,r,0,7);ink(c)}
+function heart(c,x,y,s){
+  c.beginPath();c.moveTo(x,y+.9*s);
+  c.bezierCurveTo(x-1.35*s,y-.1*s,x-.65*s,y-1.05*s,x,y-.38*s);
+  c.bezierCurveTo(x+.65*s,y-1.05*s,x+1.35*s,y-.1*s,x,y+.9*s);c.closePath();ink(c);
+}
+function star(c,x,y,ro,ri,pts,rot){
+  c.beginPath();for(var i=0;i<pts*2;i++){var t=(rot||0)+i*Math.PI/pts,r=i%2?ri:ro;c.lineTo(x+r*Math.sin(t),y-r*Math.cos(t))}c.closePath();ink(c);
+}
+function rose(c,x,y,s,rot){
+  rot=rot||0;var L=[{R:1,n:7,b:1.3},{R:.8,n:6,b:1.32},{R:.6,n:5,b:1.34},{R:.42,n:4,b:1.36}],i,k;
+  L.forEach(function(l,i){
+    var R=l.R*s,off=rot+i*.55;c.beginPath();
+    for(k=0;k<l.n;k++){
+      var a0=off+k*2*Math.PI/l.n,a1=off+(k+1)*2*Math.PI/l.n,am=(a0+a1)/2;
+      if(k===0)c.moveTo(x+R*Math.sin(a0),y-R*Math.cos(a0));
+      c.quadraticCurveTo(x+R*l.b*Math.sin(am),y-R*l.b*Math.cos(am),x+R*Math.sin(a1),y-R*Math.cos(a1));
+    }
+    c.closePath();ink(c);
+    /* petal crease */
+    c.beginPath();for(k=0;k<l.n;k++){var am2=off+(k+.5)*2*Math.PI/l.n;c.moveTo(x+R*.55*Math.sin(am2-.35),y-R*.55*Math.cos(am2-.35));c.quadraticCurveTo(x+R*.8*Math.sin(am2),y-R*.8*Math.cos(am2),x+R*.55*Math.sin(am2+.35),y-R*.55*Math.cos(am2+.35))}c.stroke();
+  });
+  c.beginPath();for(var t=0;t<=11;t+=.4){var r=s*.028*t;c.lineTo(x+r*Math.cos(t+rot),y+r*Math.sin(t+rot))}c.stroke();
+}
+function bow(c,x,y,s){
+  c.beginPath();c.moveTo(x,y);c.bezierCurveTo(x-s*1.4,y-s*1.1,x-s*1.7,y+s*.7,x,y);ink(c);
+  c.beginPath();c.moveTo(x,y);c.bezierCurveTo(x+s*1.4,y-s*1.1,x+s*1.7,y+s*.7,x,y);ink(c);
+  c.beginPath();c.moveTo(x,y);c.bezierCurveTo(x-s*.3,y+s*.9,x-s*.9,y+s*1.2,x-s*1.1,y+s*1.8);c.lineTo(x-s*.7,y+s*1.6);c.lineTo(x-s*.5,y+s*1.9);c.bezierCurveTo(x-s*.4,y+s*1.2,x-s*.1,y+s*.8,x,y);ink(c);
+  c.beginPath();c.moveTo(x,y);c.bezierCurveTo(x+s*.3,y+s*.9,x+s*.9,y+s*1.2,x+s*1.1,y+s*1.8);c.lineTo(x+s*.7,y+s*1.6);c.lineTo(x+s*.5,y+s*1.9);c.bezierCurveTo(x+s*.4,y+s*1.2,x+s*.1,y+s*.8,x,y);ink(c);
+  circle(c,x,y,s*.22);
+}
+var ART={
+floral:function(c){
+  var i,base=[450,800];
+  for(i=-4;i<=4;i++){var a=i*.27;leaf(c,base[0],base[1],i%2?330:380,42,a)}
+  c.beginPath();c.moveTo(450,800);c.lineTo(450,520);c.moveTo(440,800);c.lineTo(330,520);c.moveTo(460,800);c.lineTo(570,520);c.stroke();
+  rose(c,450,330,150,0);rose(c,290,470,112,.4);rose(c,610,470,112,.9);
+  rose(c,170,610,60,.2);rose(c,730,610,60,.6);
+  [[120,330],[780,330],[200,200],[700,200]].forEach(function(q,k){heart(c,q[0],q[1],18+k%2*6)});
+  bow(c,450,780,34);
+},
+heart:function(c){
+  var n=16,i,pts=[];
+  function hp(t){return[450+19*16*Math.pow(Math.sin(t),3)/1.0*.98,440-19*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*.98]}
+  for(i=0;i<n;i++)pts.push(hp(i*2*Math.PI/n+.2));
+  for(i=0;i<n;i++){var a=pts[i],b=pts[(i+1)%n],ang=Math.atan2(b[0]-a[0],-(b[1]-a[1])),mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+    leaf(c,mx,my,86,15,ang+.9);leaf(c,mx,my,86,15,ang-.9+Math.PI)}
+  for(i=0;i<n;i++){rose(c,pts[i][0],pts[i][1],i%2?42:58,i)}
+  heart(c,450,450,150);heart(c,450,450,100);heart(c,450,450,52);
+  [[330,360],[570,360]].forEach(function(q){heart(c,q[0],q[1],14)});
+},
+moon:function(c,R){
+  c._f=false;circle(c,430,420,230);circle(c,520,380,190);circle(c,430,420,196);c._f=c._m;
+  var r=R,i;
+  for(i=0;i<14;i++){var x=60+r()*780,y=60+r()*780;if(Math.hypot(x-430,y-420)<275)continue;var s=14+r()*22;if(i%3===0)heart(c,x,y,s*.8);else star(c,x,y,s,s*.45,5,r())}
+  heart(c,360,420,46);heart(c,455,470,26);
+  rose(c,250,770,62,.2);rose(c,640,780,52,.6);leaf(c,330,790,90,16,1.4);leaf(c,560,800,90,16,-1.4);
+},
+butterfly:function(c){
+  function wing(){
+    c.beginPath();c.moveTo(450,420);c.bezierCurveTo(560,200,800,170,830,350);c.bezierCurveTo(850,500,650,540,450,450);c.closePath();ink(c);
+    c.beginPath();c.moveTo(450,470);c.bezierCurveTo(620,500,760,620,690,740);c.bezierCurveTo(620,830,480,680,450,490);c.closePath();ink(c);
+    c.beginPath();c.moveTo(490,420);c.bezierCurveTo(580,290,720,270,760,350);c.bezierCurveTo(770,430,640,470,490,440);c.closePath();ink(c);
+    heart(c,670,350,34);circle(c,610,640,30);circle(c,610,640,12);
+    [[560,360,9],[600,300,7],[740,420,8],[560,560,8],[650,700,7]].forEach(function(d){circle(c,d[0],d[1],d[2])});
+  }
+  wing();c.save();c.translate(900,0);c.scale(-1,1);wing();c.restore();
+  c.beginPath();c.ellipse(450,520,24,150,0,0,7);ink(c);circle(c,450,350,26);
+  c.beginPath();c.moveTo(440,330);c.bezierCurveTo(420,250,380,220,340,210);c.moveTo(460,330);c.bezierCurveTo(480,250,520,220,560,210);c.stroke();
+  heart(c,336,206,12);heart(c,564,206,12);
+  rose(c,150,800,58,.3);rose(c,750,800,58,.8);leaf(c,230,820,100,18,1.3);leaf(c,670,820,100,18,-1.3);
+},
+rings:function(c){
+  var i;c._f=false;
+  circle(c,355,440,170);circle(c,355,440,138);circle(c,545,440,170);circle(c,545,440,138);c._f=c._m;
+  c.beginPath();c.moveTo(355,270);c.lineTo(310,210);c.lineTo(355,160);c.lineTo(400,210);c.closePath();ink(c);
+  c.beginPath();c.moveTo(310,210);c.lineTo(400,210);c.moveTo(355,270);c.lineTo(355,210);c.moveTo(355,160);c.lineTo(355,210);c.stroke();
+  for(i=-3;i<=3;i++)leaf(c,450,760,230,34,i*.32);
+  rose(c,450,700,96,.2);rose(c,300,740,64,.5);rose(c,600,740,64,.9);
+  heart(c,170,560,24);heart(c,730,560,24);heart(c,120,460,15);heart(c,780,460,15);
+},
+lock:function(c){
+  c._f=false;c.beginPath();c.arc(450,300,120,Math.PI,2*Math.PI);c.lineTo(570,380);c.lineTo(530,380);c.lineTo(530,300);c.arc(450,300,80,0,Math.PI,true);c.lineTo(370,380);c.lineTo(330,380);c.closePath();c.stroke();c._f=c._m;
+  heart(c,450,520,240);circle(c,450,500,34);
+  c.beginPath();c.moveTo(436,520);c.lineTo(430,600);c.lineTo(470,600);c.lineTo(464,520);ink(c);
+  c.save();c.translate(610,790);c.rotate(-.7);
+  heart(c,0,0,58);c.beginPath();c.rect(50,-14,230,28);ink(c);
+  c.beginPath();c.rect(205,14,24,54);ink(c);c.beginPath();c.rect(245,14,20,38);ink(c);c.restore();
+  rose(c,200,720,92,.3);rose(c,110,590,56,.7);leaf(c,290,790,110,20,1.2);leaf(c,100,690,110,20,-.5);leaf(c,250,640,100,18,.9);
+  heart(c,740,230,22);heart(c,160,230,22);heart(c,800,380,14);heart(c,100,380,14);
+},
+arch:function(c){
+  c._f=false;
+  c.beginPath();c.moveTo(150,830);c.lineTo(150,400);c.arc(450,400,300,Math.PI,2*Math.PI);c.lineTo(750,830);c.closePath();c.stroke();
+  c.beginPath();c.moveTo(195,830);c.lineTo(195,400);c.arc(450,400,255,Math.PI,2*Math.PI);c.lineTo(705,830);c.stroke();c._f=c._m;
+  var i;
+  for(i=0;i<=8;i++){var a=-Math.PI/2*0+(-Math.PI/2)+(i-4)*Math.PI/9.5,x=450+300*Math.sin(a),y=400-300*Math.cos(a);leaf(c,x,y,74,14,a+.7);leaf(c,x,y,74,14,a-.7+Math.PI)}
+  for(i=0;i<=8;i++){var b=(i-4)*Math.PI/9.5,x2=450+300*Math.sin(b),y2=400-300*Math.cos(b);rose(c,x2,y2,i%2?34:46,i)}
+  for(i=0;i<5;i++){var y3=430+i*90;rose(c,150,y3,i%2?30:40,i);rose(c,750,y3,i%2?30:40,i+2)}
+  heart(c,450,520,120);heart(c,450,520,74);heart(c,330,640,18);heart(c,570,640,18);
+},
+};
+
+var Q=[
+ {id:"q1",art:"arch",ar:{l:"وين تعرفتوا؟",p:"مقهى صغير في دبي",c:function(v){return"هنا بدأت قصتنا: "+v}},en:{l:"Where did you meet?",p:"A small café in Dubai",c:function(v){return"This is where our story began: "+v}}},
+ {id:"q2",art:"butterfly",ar:{l:"أول موقف ضحكتوا عليه؟",p:"لما انسكبت القهوة على الطاولة",c:function(v){return"وأول ضحكة بيننا: "+v}},en:{l:"The first thing you laughed about?",p:"When the coffee spilled on the table",c:function(v){return"And our first laugh: "+v}}},
+ {id:"q3",art:"moon",ar:{l:"مكان يذكّرك فيها؟",p:"الكورنيش وقت الغروب",c:function(v){return"ومكان كل ما مريت فيه تذكرتك: "+v}},en:{l:"A place that reminds you of her?",p:"The seafront at sunset",c:function(v){return"A place I never pass without thinking of you: "+v}}},
+ {id:"q4",art:"floral",ar:{l:"شي تحبه فيها؟",p:"ضحكتها وطريقتها لما تتحمس",c:function(v){return"وأحب فيك: "+v}},en:{l:"Something you love about her?",p:"Her laugh and how she gets excited",c:function(v){return"And what I love about you: "+v}}},
+ {id:"q5",art:"lock",ar:{l:"لقب تناديها فيه؟",p:"قمر",c:function(v){return"وبين كل الناس، لقبك عندي: "+v}},en:{l:"A nickname you call her?",p:"Moonlight",c:function(v){return"Among everyone, my name for you: "+v}}},
+ {id:"q6",art:"rings",ar:{l:"حلمكم الجاي؟",p:"بيت صغير نلوّن حيطانه مع بعض",c:function(v){return"وحلمنا الجاي: "+v}},en:{l:"Your dream for the future?",p:"A little home whose walls we colour together",c:function(v){return"And our dream ahead: "+v}}}
+];
+var S={
+ar:{genT:function(n,t){return"جاري رسم المشهد "+n+" من "+t+"، نصف دقيقة تقريباً لكل مشهد"},mOn:"الموسيقى: تشغيل",introT:"كتاب تلوين خاص",introM:"هدية رقمية فيها قصتكم",introB:"افتحي هديتك",pay:"ادفع وأرسل لها",payNote:"بعد الدفع يوصلها رابط الكتاب على بريدها مباشرة.",consent:"أوافق على",terms:"الشروط",privacy:"سياسة الخصوصية",and:"و",needEm:"اكتب بريدها في خانة «بريدها الإلكتروني» في تبويب «أنا أهدي».",needConsent:"لازم توافق على الشروط وسياسة الخصوصية.",paying:"جاري التجهيز...",upl:function(i,n){return"جاري حفظ المشهد "+i+" من "+n},bigAudio:"ملف الصوت كبير (أكثر من 3 ميجا). صغّره وجرّب مرة ثانية.",payFail:"تعذّر إكمال الطلب",doneWait:"جاري تأكيد الدفع...",doneT:"تم الدفع. كتابك في طريقه إليها",doneEm:"أرسلنا الرابط إلى بريدها. وهذا رابط الكتاب لو حبيت ترسله بنفسك:",doneNoEm:"تم الدفع. هذا رابط الكتاب، أرسله لها:",copy:"نسخ الرابط",copied:"تم النسخ",notFound:"الكتاب غير موجود أو لم يُدفع بعد.",cancelled:"تم إلغاء الدفع. تقدر تجرّب مرة ثانية.",pdf:"تحميل PDF للطباعة",pdfBusy:"جاري تجهيز ملف PDF...",pdfT:"كتاب تلوين خاص",sig:"سطر ختام تكتبه بنفسك (اختياري)",clip:"حمّل المقطع (الكتابة مع الصوت)",clipBusy:"جاري تجهيز المقطع، يستغرق مدة الصوت تقريباً. لا تغلق الصفحة.",clipNo:"المتصفح هذا لا يدعم تجهيز المقطع.",clipT:"مقطعك جاهز",dl:"تنزيل",clipH:"في الموقع المنشور زر «تنزيل» يحفظ المقطع مباشرة. إذا ما اشتغل، اضغط مطولاً على الفيديو واختر حفظ.",cl:"إغلاق",ms:"الموسيقى اللي تحبها أثناء التلوين",mo_off:"بدون موسيقى",mo_piano:"بيانو هادئ",mo_oud:"عود شرقي هادئ",mo_sea:"أمواج البحر",mo_rain:"مطر خفيف",mo_file:"أغنيتها المفضلة (ارفع ملف)",sa:"رسالة صوتية أو مقطع أغنية للصفحة الأخيرة (اختياري)",saN:"تُشغَّل لها لما تنفتح الصفحة الأخيرة مع رسالتك. التسجيل المباشر يشتغل في الموقع بعد النشر، وإذا ما اشتغل ارفع ملف صوتي.",rec:"سجّل رسالة صوتية",recStop:"أوقف التسجيل",recOn:"جاري التسجيل...",recNo:"التسجيل غير متاح هنا. ارفع ملفًا صوتيًا بدلاً منه.",mOff:"الموسيقى: إيقاف",song:"مقطع من أغنيتها المفضلة (اختياري)",songN:"اختر الموسيقى اللي تحبها، وتشتغل لها أثناء التلوين ويقدر توقفها. لو رفعت أغنية تأكد أن عندك حق استخدامها.",brand:"لوّنها",tMake:"أنا أهدي",tPlay:"كيف تستلمه",h1:"كتاب تلوين من قصتكم أنتم، وآخر صفحة فيه سر",sub:"تجاوب على أسئلة بسيطة عن علاقتكم، فكل صفحة تصير مشهد من قصتكم للتلوين. هي تلوّن الكتاب على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما تخلّصه، وتلقى فيها رسالتك.",to:"اسمها",from:"اسمك",sec:"رسالة السر (تظهر لها في الصفحة الأخيرة)",em:"بريدها الإلكتروني",go:"جهّز الكتاب وشوف كيف يوصلها",how:"كيف يشتغل",s1:"تجاوب على ٦ أسئلة عن قصتكم، وتكتب رسالتك السرية.",s2:"يتجهّز كتاب من ٦ مشاهد مرسومة للتلوين، تحت كل مشهد جملة من قصتكم.",s3:"يوصلها رابط على بريدها، وتلوّن الكتاب على الجوال أو تطبعه.",s4:"لما تخلّص التلوين تنفتح الصفحة الأخيرة وتظهر رسالتك.",demoNote:"هذي نسخة تجريبية. الرسومات هنا مرسومة بالكود، وفي النسخة الفعلية تُولَّد رسمة فنية لكل مشهد من تفاصيل قصتكم.",colors:"الألوان",und:"تراجع",rnd:"لوّنها لي (للتجربة)",clr:"مسح",prev:"السابقة",next:"التالية",foot:"التلوين يتم داخل متصفحك.",
+ prog:function(p){return"لوّنتِ "+Math.round(p*100)+"% من هذي الصفحة (يكفي 50%)"},lockT:"الصفحة الأخيرة مقفلة",lockP:function(n,t){return"لوّني كل المشاهد لين تنفتح. أنجزتِ "+n+" من "+t},open:"افتحي السر",cover:"من ",secTitle:"الصفحة الأخيرة",lang:"English",eraser:"ممحاة",custom:"لون مخصص",toLbl:function(t){return"إلى "+t},byLbl:function(f){return"لكِ دائماً، "+f},samples:{to:"ريم",from:"خالد",sec:"تتزوجيني يا ريم؟",q1:"مقهى صغير في دبي مول",q2:"لما انسكبت القهوة على الطاولة",q3:"الكورنيش وقت الغروب",q4:"ضحكتك وطريقتك لما تتحمسين",q5:"قمر",q6:"بيت صغير نلوّن حيطانه مع بعض"}},
+en:{genT:function(n,t){return"Drawing scene "+n+" of "+t+", about half a minute each"},mOn:"Music: on",introT:"A PERSONAL COLOURING BOOK",introM:"A digital gift made from your story",introB:"Open your gift",pay:"Pay and send to her",payNote:"After payment the book link reaches her email right away.",consent:"I agree to the",terms:"Terms",privacy:"Privacy Policy",and:"and",needEm:"Enter her email in the \"Her email\" field on the \"I'm gifting\" tab.",needConsent:"You need to accept the Terms and Privacy Policy.",paying:"Preparing...",upl:function(i,n){return"Saving scene "+i+" of "+n},bigAudio:"The audio file is large (over 3 MB). Make it smaller and try again.",payFail:"Could not complete the order",doneWait:"Confirming payment...",doneT:"Paid. Your book is on its way to her",doneEm:"We emailed her the link. Here it is if you want to send it yourself:",doneNoEm:"Paid. Here is the book link, send it to her:",copy:"Copy link",copied:"Copied",notFound:"This book does not exist or has not been paid for yet.",cancelled:"Payment cancelled. You can try again.",pdf:"Download print PDF",pdfBusy:"Preparing the PDF...",pdfT:"A personal colouring book",sig:"A closing line in your own words (optional)",clip:"Download the clip (message with audio)",clipBusy:"Preparing your clip, it takes about as long as the audio. Keep this page open.",clipNo:"This browser cannot prepare the clip.",clipT:"Your clip is ready",dl:"Download",clipH:"On the published site the Download button saves the clip directly. If it does not, press and hold the video and choose Save.",cl:"Close",ms:"The music she loves while colouring",mo_off:"No music",mo_piano:"Soft piano",mo_oud:"Soft oud",mo_sea:"Sea waves",mo_rain:"Light rain",mo_file:"Her favourite song (upload a file)",sa:"A voice message or song clip for the last page (optional)",saN:"Plays for her when the last page opens, next to your message. Live recording works on the published site; if it does not, upload an audio file.",rec:"Record a voice message",recStop:"Stop recording",recOn:"Recording...",recNo:"Recording is not available here. Upload an audio file instead.",mOff:"Music: off",song:"A clip of her favourite song (optional)",songN:"Pick the music she loves. It plays while she colours and she can stop it. If you upload a song, make sure you have the right to use it.",brand:"Lawwenha",tMake:"I'm gifting",tPlay:"How she gets it",h1:"A colouring book of your own story, with a secret on the last page",sub:"Answer a few simple questions about your relationship and every page becomes a scene from your story to colour. She colours the book on screen, and the last page only opens once she finishes it, with your message inside.",to:"Her name",from:"Your name",sec:"Secret message (shown on the last page)",em:"Her email",go:"Prepare the book and see how she gets it",how:"How it works",s1:"Answer 6 questions about your story and write your secret message.",s2:"A book of 6 scenes to colour is prepared, with a line from your story under each.",s3:"A link reaches her email. She colours on her phone or prints it.",s4:"When she finishes colouring, the last page opens and your message appears.",demoNote:"This is a preview. Drawings here are made by code. The live version generates a fine-art drawing for each scene from your story details.",colors:"Colours",und:"Undo",rnd:"Colour it for me (demo)",clr:"Clear",prev:"Previous",next:"Next",foot:"Preview version. Colouring happens in your browser.",
+ prog:function(p){return"You coloured "+Math.round(p*100)+"% of this page (50% is enough)"},lockT:"The last page is locked",lockP:function(n,t){return"Colour every scene to unlock it. You finished "+n+" of "+t},open:"Open the secret",cover:"From ",secTitle:"Last page",lang:"العربية",eraser:"Eraser",custom:"Custom colour",toLbl:function(t){return"For "+t},byLbl:function(f){return"Yours always, "+f},samples:{to:"Reem",from:"Khalid",sec:"Will you marry me, Reem?",q1:"A small café in Dubai Mall",q2:"When the coffee spilled on the table",q3:"The seafront at sunset",q4:"Your laugh and how you get excited",q5:"Moonlight",q6:"A little home whose walls we colour together"}}
+};
+var PAL=["#D7263D","#F2547D","#FF9EB5","#F46036","#FFB703","#FFE066","#2E933C","#7BC950","#B5E48C","#0F8B8D","#4CC9F0","#2563EB","#1B2A6B","#7B2CBF","#B388EB","#8D2F5C","#8D6E63","#F1E3D3","#17152B","#FFFFFF"];
+var THEMES=[["#E85D8E","#FF9EB5","#FFB703","#7B2CBF","#B388EB","#FFE066"],["#D7263D","#F46036","#FFB703","#8D2F5C","#FF9EB5","#FFE066"],["#0F8B8D","#4CC9F0","#7BC950","#B388EB","#FF9EB5","#FFE066"]];
+var RECV=false,AI=false,lang="ar",book=null,cur=0,curColor=PAL[1],pg=[],lastTheme=-1;
+var cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+function $(id){return document.getElementById(id)}
+function hex2u(h){var n=parseInt(h.slice(1),16);return(255<<24|(n&255)<<16|((n>>8)&255)<<8|((n>>16)&255))>>>0}
+function build(i){
+  if(pg[i]&&pg[i].lab)return pg[i];
+  var sc=book.scenes[i],art=document.createElement("canvas");art.width=art.height=W;
+  var c=art.getContext("2d",{willReadFrequently:true});c.strokeStyle=INK;c.fillStyle="#fff";c.lineWidth=3.6;c.lineJoin="round";c.lineCap="round";c._m="e";c._f="e";
+  if(sc.img){
+    var tmp=document.createElement("canvas");tmp.width=tmp.height=W;var tc=tmp.getContext("2d",{willReadFrequently:true});
+    tc.fillStyle="#fff";tc.fillRect(0,0,W,W);var iw=sc.img.width,ih=sc.img.height,k=Math.min(W/iw,W/ih);tc.drawImage(sc.img,(W-iw*k)/2,(W-ih*k)/2,iw*k,ih*k);
+    var sd=tc.getImageData(0,0,W,W),px=sd.data,al=new Uint8Array(W*W),j;
+    for(j=0;j<al.length;j++){var lum=px[j*4]*.3+px[j*4+1]*.59+px[j*4+2]*.11;al[j]=Math.max(0,Math.min(255,(235-lum)*2.2))}
+    var al2=al.slice(),xx,yy;
+    for(yy=1;yy<W-1;yy++)for(xx=1;xx<W-1;xx++){j=yy*W+xx;var m=al[j];if(al[j-1]>m)m=al[j-1];if(al[j+1]>m)m=al[j+1];if(al[j-W]>m)m=al[j-W];if(al[j+W]>m)m=al[j+W];al2[j]=m}
+    for(j=0;j<al2.length;j++){px[j*4]=23;px[j*4+1]=21;px[j*4+2]=43;px[j*4+3]=al2[j]}
+    c.putImageData(sd,0,0);
+  }else ART[sc.art](c,rng(sc.seed));
+  var d=c.getImageData(0,0,W,W).data,total=W*W,L=0,s,p,q,x,y,lab=new Int32Array(total),stack=new Int32Array(total),cnt=[0];
+  for(s=0;s<total;s++){
+    if(lab[s]||d[s*4+3]>=128)continue;L++;var sp=0,n=0;stack[sp++]=s;lab[s]=L;
+    while(sp){p=stack[--sp];x=p%W;y=(p/W)|0;n++;
+      if(x>0){q=p-1;if(!lab[q]&&d[q*4+3]<128){lab[q]=L;stack[sp++]=q}}
+      if(x<W-1){q=p+1;if(!lab[q]&&d[q*4+3]<128){lab[q]=L;stack[sp++]=q}}
+      if(y>0){q=p-W;if(!lab[q]&&d[q*4+3]<128){lab[q]=L;stack[sp++]=q}}
+      if(y<W-1){q=p+W;if(!lab[q]&&d[q*4+3]<128){lab[q]=L;stack[sp++]=q}}}
+    cnt[L]=n;
+  }
+  for(var it=0;it<2;it++){var cp=lab.slice();for(p=0;p<total;p++){if(cp[p])continue;x=p%W;var v=0;if(x>0)v=cp[p-1];if(!v&&x<W-1)v=cp[p+1];if(!v&&p>=W)v=cp[p-W];if(!v&&p<total-W)v=cp[p+W];if(v)lab[p]=v}}
+  var colC=document.createElement("canvas");colC.width=colC.height=W;
+  pg[i]={art:art,lab:lab,cnt:cnt,col:new Uint32Array(L+1),bgL:lab[0],colC:colC,hist:[],L:L};
+  return pg[i];
+}
+function frac(i){
+  var P=pg[i];if(!P)return 0;var t=0,k=0;
+  for(var l=1;l<=P.L;l++){if(l===P.bgL)continue;t+=P.cnt[l];if(P.col[l])k+=P.cnt[l]}
+  return t?k/t:0;
+}
+function render(){
+  var P=pg[cur];if(!P)return;
+  var cc=P.colC.getContext("2d"),id=cc.createImageData(W,W),u=new Uint32Array(id.data.buffer),i,c;
+  for(i=0;i<u.length;i++){c=P.col[P.lab[i]];if(c)u[i]=c}
+  cc.putImageData(id,0,0);
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,W,W);ctx.drawImage(P.colC,0,0);ctx.drawImage(P.art,0,0);
+  progress();
+}
+function doneCount(){var n=0;for(var i=0;i<book.scenes.length;i++)if(frac(i)>=TH)n++;return n}
+function progress(){
+  var d=S[lang];
+  if(cur<book.scenes.length){var f=frac(cur);$("barI").style.width=Math.min(100,f/TH*100)+"%";$("progL").textContent=d.prog(f)}
+  drawNav();
+}
+function drawNav(){
+  var nav=$("nav"),d=S[lang],n=book.scenes.length,i;nav.innerHTML="";
+  for(i=0;i<=n;i++)(function(i){
+    var b=document.createElement("button");b.type="button";
+    if(i<n){b.textContent=String(i+1);if(frac(i)>=TH)b.className="done"}
+    else{b.textContent=doneCount()>=n?"♥":"\u{1F512}";b.className="lock"}
+    b.setAttribute("aria-current",i===cur?"true":"false");b.onclick=function(){go(i)};nav.appendChild(b);
+  })(i);
+}
+function go(i){
+  var _a=$("rAud");if(_a&&!_a.paused)_a.pause();
+  var n=book.scenes.length,d=S[lang];cur=Math.max(0,Math.min(n,i));
+  var last=cur===n,unlocked=doneCount()>=n;
+  inReveal=last&&unlocked;if(inReveal&&Mus.on)stopMusic();updMus();
+  $("page").hidden=last;$("lockp").hidden=!(last&&!unlocked);$("rev").hidden=!(last&&unlocked);$("tools").style.opacity=last?".6":"1";
+  $("prev").disabled=cur===0;$("next").disabled=last;
+  if(!last){build(cur);$("cap").textContent=book.scenes[cur].cap;render()}
+  else if(!unlocked){
+    $("lockp").innerHTML='<div class="big">'+d.lockT+'</div><div class="lbl">'+d.lockP(doneCount(),n)+'</div>';progress();
+  }else{showReveal();drawNav()}
+}
+var fxRun=0;
+function showReveal(){
+  if(Mus.on)stopMusic();
+  var d=S[lang];$("rTo").textContent=d.toLbl(book.to);$("rBy").textContent=book.sig;
+  var au=$("rAud");if(Sec.url){au.src=Sec.url;au.hidden=false;au.play().catch(function(){})}else{au.hidden=true}
+  var t=book.secret,el=$("rTxt"),k=0;el.textContent="";var id=++fxRun;
+  var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(rm){el.textContent=t}else(function type(){if(id!==fxRun)return;k++;el.textContent=t.slice(0,k);if(k<t.length)setTimeout(type,70)})();
+  var fx=$("fx"),r=fx.getBoundingClientRect();fx.width=r.width*1;fx.height=r.height*1;var x=fx.getContext("2d"),hs=[],i;
+  for(i=0;i<26;i++)hs.push({x:Math.random()*fx.width,y:fx.height+Math.random()*fx.height,s:8+Math.random()*16,v:.4+Math.random()*.9});
+  if(rm)return;
+  (function loop(){if(id!==fxRun||$("rev").hidden)return;x.clearRect(0,0,fx.width,fx.height);x.fillStyle="rgba(243,150,185,.55)";
+    hs.forEach(function(h){h.y-=h.v;if(h.y<-30){h.y=fx.height+20;h.x=Math.random()*fx.width}
+      x.save();x.translate(h.x,h.y);x.scale(h.s/10,h.s/10);x.beginPath();x.moveTo(0,9);x.bezierCurveTo(-13,-1,-6,-10,0,-4);x.bezierCurveTo(6,-10,13,-1,0,9);x.fill();x.restore()});
+    requestAnimationFrame(loop)})();
+}
+function paint(l,color){var P=pg[cur];P.col[l]=color?hex2u(color):0}
+function surprise(){
+  var P=pg[cur],t;do{t=Math.floor(Math.random()*THEMES.length)}while(t===lastTheme);lastTheme=t;
+  var th=THEMES[t],off=Math.floor(Math.random()*th.length);P.hist.push(P.col.slice());
+  for(var l=1;l<=P.L;l++){if(l===P.bgL)continue;P.col[l]=P.cnt[l]>60000?hex2u("#FFF3C9"):hex2u(th[(l*5+off)%th.length])}
+}
+cv.addEventListener("pointerdown",function(e){
+  if(cur>=book.scenes.length)return;var P=pg[cur],r=cv.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*W),y=Math.floor((e.clientY-r.top)/r.height*W);
+  if(x<0||y<0||x>=W||y>=W)return;var l=P.lab[y*W+x];if(!l)return;
+  P.hist.push(P.col.slice());if(P.hist.length>30)P.hist.shift();paint(l,curColor);render();checkUnlock();
+});
+var wasUnlocked=false;
+function checkUnlock(){var u=doneCount()>=book.scenes.length;if(u&&!wasUnlocked){wasUnlocked=true;drawNav();var b=$("nav").lastChild;if(b)b.focus&&0}wasUnlocked=u}
+function buildPalette(){
+  var pal=$("pal"),d=S[lang];pal.innerHTML="";
+  PAL.forEach(function(h){var b=document.createElement("button");b.type="button";b.className="sw";b.style.background=h;b.setAttribute("aria-label",h);b.onclick=function(){curColor=h;syncPal()};pal.appendChild(b)});
+  var er=document.createElement("button");er.type="button";er.className="sw er";er.dataset.er="1";er.title=d.eraser;er.setAttribute("aria-label",d.eraser);er.onclick=function(){curColor=null;syncPal()};pal.appendChild(er);
+  var ci=document.createElement("input");ci.type="color";ci.value="#8E2C57";ci.title=d.custom;ci.setAttribute("aria-label",d.custom);ci.style.cssText="width:34px;height:34px;border:0;padding:0;background:none";ci.oninput=function(){curColor=ci.value.toUpperCase();syncPal()};pal.appendChild(ci);
+  syncPal();
+}
+function syncPal(){document.querySelectorAll("#pal .sw").forEach(function(b){var er=b.dataset.er==="1";b.setAttribute("aria-pressed",(er?curColor===null:b.getAttribute("aria-label")===curColor)?"true":"false")})}
+function buildForm(keep){
+  var d=S[lang],box=$("qs"),old={};Q.forEach(function(q){var e=$(q.id);if(e)old[q.id]=e.value});
+  box.innerHTML="";
+  Q.forEach(function(q,i){
+    var f=document.createElement("div");f.className="f";
+    var l=document.createElement("label");l.className="lbl";l.htmlFor=q.id;l.textContent=(i+1)+". "+q[lang].l;
+    var inp=document.createElement("input");inp.className="in";inp.id=q.id;inp.maxLength=90;inp.placeholder=q[lang].p;
+    inp.value=keep&&old[q.id]!=null?old[q.id]:d.samples[q.id];
+    f.appendChild(l);f.appendChild(inp);box.appendChild(f);
+  });
+}
+function makeBook(){
+  readStyle();
+  book={to:$("to").value.trim()||S[lang].samples.to,from:$("from").value.trim()||S[lang].samples.from,secret:$("sec").value.trim()||S[lang].samples.sec,sig:($("sig").value||"").trim(),scenes:[],raw:{}};
+  Q.forEach(function(q,i){var v=$(q.id).value.trim()||S[lang].samples[q.id];book.raw[q.id]=v;book.scenes.push({art:q.art,cap:q[lang].c(v),seed:i*31+7})});
+  pg=[];wasUnlocked=false;
+}
+function showIntro(){
+  var d=S[lang];$("inTo").textContent=d.toLbl(book.to);$("intro").hidden=false;
+  try{$("inOpen").focus()}catch(e){}
+}
+function refreshIntro(){if(!$("intro").hidden)$("inTo").textContent=S[lang].toLbl(book.to)}
+$("inOpen").onclick=function(){$("intro").hidden=true;readStyle();if(Mus.style!=="off"&&!Mus.userOff&&!Mus.on)startMusic()};
+function showTab(p){
+  if(typeof updPay==="function")updPay();
+  if(p)armMusic();
+  $("make").hidden=p;$("play").hidden=!p;$("tMake").setAttribute("aria-pressed",p?"false":"true");$("tPlay").setAttribute("aria-pressed",p?"true":"false");
+  if(p){if(!book)makeBook();buildPalette();go(Math.min(cur,book.scenes.length));if(!book._intro){book._intro=true;showIntro()}}
+  updPay();
+}
+function applyLang(){
+  var A=$("app"),d=S[lang];A.dir=lang==="ar"?"rtl":"ltr";A.lang=lang;
+  document.querySelectorAll("[data-t]").forEach(function(e){var k=e.getAttribute("data-t");if(typeof d[k]==="string")e.textContent=d[k]});
+  $("lang").textContent=d.lang;if(typeof updMus==="function")updMus();if(typeof refreshIntro==="function"&&book)refreshIntro();if($("rec")&&!(Sec.rec&&Sec.rec.state==="recording"))$("rec").textContent=d.rec;document.title=lang==="ar"?"لوّنها":"Lawwenha";
+}
+function genScenes(done){
+  var n=book.scenes.length,fin=0,next=0,run=0;$("make").hidden=true;$("gen").hidden=false;
+  function tick(){$("genT").textContent=S[lang].genT(Math.min(fin+1,n),n);$("genB").style.width=(fin/n*100)+"%"}
+  tick();
+  function one(i){
+    var sc=book.scenes[i];
+    return fetch("/api/scene",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idx:i,answer:book.raw[Q[i].id],lang:lang})})
+      .then(function(r){return r.json()}).then(function(j){return new Promise(function(res){if(!j.image)return res();sc.src=j.image;var im=new Image();im.onload=function(){sc.img=im;res()};im.onerror=function(){res()};im.src=j.image})})
+      .catch(function(){}).then(function(){fin++;tick()});
+  }
+  function pump(){
+    if(next>=n){if(run===0){$("gen").hidden=true;done()}return}
+    while(run<2&&next<n){run++;one(next++).then(function(){run--;pump()})}
+  }
+  pump();
+}
+$("f").addEventListener("submit",function(e){e.preventDefault();makeBook();cur=0;
+  if(AI){genScenes(function(){showTab(true);window.scrollTo(0,0)})}else{showTab(true);window.scrollTo(0,0)}});
+$("tMake").onclick=function(){showTab(false)};$("tPlay").onclick=function(){makeBook();showTab(true)};
+$("prev").onclick=function(){go(cur-1)};$("next").onclick=function(){go(cur+1)};
+$("und").onclick=function(){var P=pg[cur];if(P&&P.hist.length){P.col=P.hist.pop();render();go(cur)}};
+$("clr").onclick=function(){var P=pg[cur];if(!P)return;P.hist.push(P.col.slice());P.col.fill(0);render()};
+$("rnd").onclick=function(){if(cur>=book.scenes.length)return;surprise();render();checkUnlock();drawNav()};
+$("lang").onclick=function(){
+  var wasPlay=!$("play").hidden,vals={};["to","from","sec"].forEach(function(k){vals[k]=$(k).value});
+  var oldS=S[lang].samples;lang=lang==="ar"?"en":"ar";applyLang();buildForm(false);
+  ["to","from","sec"].forEach(function(k){$(k).value=(vals[k]===oldS[k]||!vals[k])?S[lang].samples[k]:vals[k]});
+  if(RECV){book.scenes.forEach(function(sc,i){sc.cap=Q[i][lang].c(book.raw[Q[i].id]||"")});go(cur)}else if(wasPlay){var keep=pg;makeBook();pg=keep;showTab(true)}
+};
+try{fetch("/api/scene").then(function(r){return r.json()}).then(function(j){if(j&&j.ready)AI=true}).catch(function(){})}catch(e){}
+
+var inReveal=false;
+var Mus={on:false,ctx:null,timer:null,audio:null,url:null,userOff:false,style:"off",master:null,nodes:[]};
+function updMus(){var b=$("mus"),d=S[lang];if(!b)return;b.hidden=Mus.style==="off"||inReveal;b.textContent=Mus.on?d.mOn:d.mOff;b.setAttribute("aria-pressed",Mus.on?"true":"false")}
+function readStyle(){var e=$("ms");Mus.style=e?e.value:"off";var f=$("song");if(f)f.hidden=Mus.style!=="file"}
+function graph(vol){
+  var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  var c=Mus.ctx=new AC();if(c.state==="suspended")c.resume();
+  var master=Mus.master=c.createGain();master.gain.value=0;master.connect(c.destination);master.gain.linearRampToValueAtTime(vol,c.currentTime+2.5);
+  var tone=c.createBiquadFilter();tone.type="lowpass";tone.frequency.value=3800;tone.connect(master);
+  var len=Math.floor(c.sampleRate*2.2),ir=c.createBuffer(2,len,c.sampleRate),ch,i;
+  for(ch=0;ch<2;ch++){var d=ir.getChannelData(ch);for(i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
+  var cv2=c.createConvolver();cv2.buffer=ir;var wet=c.createGain();wet.gain.value=.36;tone.connect(cv2);cv2.connect(wet);wet.connect(master);
+  return{c:c,tone:tone,master:master};
+}
+function noiseSrc(c){
+  var len=c.sampleRate*4,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0),i,last=0;
+  for(i=0;i<len;i++){var w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.2}
+  var s=c.createBufferSource();s.buffer=buf;s.loop=true;return s;
+}
+function startPiano(){
+  var G=graph(.3);if(!G)return;var c=G.c;
+  function piano(m,t,dur,vel){
+    var f=440*Math.pow(2,(m-69)/12),amps=[1,.5,.26,.14,.07],k;
+    for(k=0;k<amps.length;k++){var o=c.createOscillator(),g=c.createGain(),h=k+1;o.type="sine";o.frequency.value=f*h*(1+(Math.random()-.5)*.0008);
+      var peak=vel*amps[k]*.22/(1+k*.4),dk=dur/(1+k*.55);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+.008);g.gain.exponentialRampToValueAtTime(.0002,t+.008+dk);o.connect(g);g.connect(G.tone);o.start(t);o.stop(t+dk+.1)}
+  }
+  var bars=[{b:45,a:[57,60,64],m:[[0,76,4],[4,72,2],[6,74,2]]},{b:41,a:[57,60,65],m:[[0,72,3],[3,74,1],[4,76,4]]},{b:48,a:[55,60,64],m:[[0,79,4],[4,76,2],[6,72,2]]},{b:43,a:[55,59,62],m:[[0,74,4],[4,71,2],[6,74,2]]},{b:45,a:[57,60,64],m:[[0,76,2],[2,81,2],[4,79,2],[6,76,2]]},{b:38,a:[57,62,65],m:[[0,77,4],[4,74,2],[6,77,2]]},{b:40,a:[56,59,64],m:[[0,80,4],[4,76,2],[6,71,2]]},{b:45,a:[57,60,64],m:[[0,76,2],[2,72,2],[4,69,4]]}],
+  e8=60/66/2,pat=[null,0,1,2,1,2,1,0],step=0,tn=c.currentTime+.2;
+  function sched(){while(tn<c.currentTime+2.5){var B=bars[step%bars.length],j;piano(B.b,tn,4.2,.9);piano(B.b+12,tn,3,.35);
+    for(j=1;j<8;j++)piano(B.a[pat[j]],tn+j*e8+(Math.random()-.5)*.02,2.4,.38+Math.random()*.1);
+    B.m.forEach(function(n){piano(n[1],tn+n[0]*e8+(Math.random()-.5)*.025,Math.min(4.5,n[2]*e8*1.6+1.4),.8+Math.random()*.15)});tn+=8*e8;step++}}
+  sched();Mus.timer=setInterval(sched,500);
+}
+function startOud(){
+  var G=graph(.34);if(!G)return;var c=G.c;
+  function pluck(m,t,dur,vel){
+    var f=440*Math.pow(2,(m-69)/12),o=c.createOscillator(),o2=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain();
+    o.type="sawtooth";o2.type="triangle";o.frequency.setValueAtTime(f*1.012,t);o.frequency.exponentialRampToValueAtTime(f,t+.06);o2.frequency.value=f*2;
+    fl.type="lowpass";fl.frequency.setValueAtTime(3200,t);fl.frequency.exponentialRampToValueAtTime(420,t+.5);fl.Q.value=1.2;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*.16,t+.004);g.gain.exponentialRampToValueAtTime(.0002,t+dur);
+    o.connect(fl);o2.connect(fl);fl.connect(g);g.connect(G.tone);o.start(t);o2.start(t);o.stop(t+dur+.1);o2.stop(t+dur+.1);
+  }
+  var bars=[[[0,69,2],[2,70,1],[3,69,1],[4,67,3],[7,66,1]],[[0,67,2],[2,66,2],[4,63,2],[6,62,2]],[[0,62,1],[1,63,1],[2,66,2],[4,67,2],[6,69,2]],[[0,70,3],[3,69,1],[4,67,2],[6,66,2]],[[0,69,2],[2,74,2],[4,72,2],[6,70,2]],[[0,69,2],[2,67,2],[4,66,3],[7,67,1]],[[0,63,2],[2,66,2],[4,67,2],[6,66,2]],[[0,62,8]]],
+  e8=60/72/2,step=0,tn=c.currentTime+.2;
+  function sched(){while(tn<c.currentTime+2.5){var B=bars[step%bars.length];
+    pluck(50,tn,3.2,.9);pluck(50,tn+4*e8,2.6,.6);pluck(57,tn+6*e8,2.2,.4);
+    B.forEach(function(n){pluck(n[1],tn+n[0]*e8+(Math.random()-.5)*.02,Math.min(3.4,n[2]*e8*1.5+.9),.8+Math.random()*.2)});tn+=8*e8;step++}}
+  sched();Mus.timer=setInterval(sched,500);
+}
+function startNoise(kind){
+  var G=graph(kind==="sea"?.5:.3);if(!G)return;var c=G.c,n=noiseSrc(c),f=c.createBiquadFilter(),g=c.createGain(),lfo=c.createOscillator(),lg=c.createGain();
+  if(kind==="sea"){f.type="lowpass";f.frequency.value=700;g.gain.value=.5;lfo.frequency.value=.09;lg.gain.value=.38}
+  else{f.type="bandpass";f.frequency.value=4200;f.Q.value=.5;g.gain.value=.55;lfo.frequency.value=.3;lg.gain.value=.08}
+  lfo.connect(lg);lg.connect(g.gain);n.connect(f);f.connect(g);g.connect(G.master);n.start();lfo.start();
+}
+function startMusic(){
+  if(Mus.on||inReveal)return;readStyle();if(Mus.style==="off")return;Mus.on=true;
+  if(Mus.style==="file"){if(Mus.url){if(!Mus.audio){Mus.audio=new Audio(Mus.url);Mus.audio.loop=true;Mus.audio.volume=.6}Mus.audio.play().catch(function(){})}}
+  else if(Mus.style==="piano")startPiano();else if(Mus.style==="oud")startOud();else startNoise(Mus.style);
+  updMus();
+}
+function stopMusic(){
+  Mus.on=false;if(Mus.audio)Mus.audio.pause();
+  if(Mus.timer){clearInterval(Mus.timer);Mus.timer=null}
+  if(Mus.ctx){var c=Mus.ctx,m=Mus.master;Mus.ctx=null;try{m.gain.cancelScheduledValues(c.currentTime);m.gain.setValueAtTime(m.gain.value,c.currentTime);m.gain.linearRampToValueAtTime(0,c.currentTime+.8)}catch(e){}setTimeout(function(){try{c.close()}catch(e){}},1000)}
+  updMus();
+}
+var armed=false;
+function armMusic(){
+  readStyle();if(armed||Mus.userOff||Mus.style==="off")return;armed=true;
+  function first(){document.removeEventListener("pointerdown",first);armed=false;if(!Mus.on&&!Mus.userOff)startMusic()}
+  document.addEventListener("pointerdown",first);
+}
+$("mus").onclick=function(){
+  if(Mus.on){Mus.userOff=true;stopMusic()}else{Mus.userOff=false;startMusic()}
+};
+$("ms").addEventListener("change",function(){
+  var was=Mus.on;if(was)stopMusic();readStyle();Mus.userOff=false;updMus();if(was&&Mus.style!=="off")setTimeout(startMusic,1100)
+});
+$("song").addEventListener("change",function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  if(Mus.url){try{URL.revokeObjectURL(Mus.url)}catch(e){}}
+  Mus.url=URL.createObjectURL(f);if(Mus.audio){Mus.audio.pause();Mus.audio=null}
+  if(Mus.on){stopMusic();setTimeout(startMusic,1100)}
+});
+var Sec={url:null,rec:null,chunks:[]};
+function duck(on){
+  try{if(Mus.master&&Mus.ctx)Mus.master.gain.linearRampToValueAtTime(on?.08:.3,Mus.ctx.currentTime+.6);if(Mus.audio)Mus.audio.volume=on?.15:.6}catch(e){}
+}
+(function(){
+  var au=$("rAud");au.addEventListener("play",function(){duck(true)});au.addEventListener("pause",function(){duck(false)});au.addEventListener("ended",function(){duck(false)});
+  function setSec(u){if(Sec.url&&Sec.url!==u){try{URL.revokeObjectURL(Sec.url)}catch(e){}}Sec.url=u;var p=$("sap");p.src=u;p.hidden=false}
+  $("sa").addEventListener("change",function(){var f=this.files&&this.files[0];if(f){setSec(URL.createObjectURL(f));$("recS").textContent=""}});
+  $("rec").onclick=function(){
+    var d=S[lang],st=$("recS");
+    if(Sec.rec&&Sec.rec.state==="recording"){Sec.rec.stop();return}
+    if(!navigator.mediaDevices||!window.MediaRecorder){st.textContent=d.recNo;return}
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      Sec.chunks=[];var r=Sec.rec=new MediaRecorder(stream);
+      r.ondataavailable=function(e){if(e.data&&e.data.size)Sec.chunks.push(e.data)};
+      r.onstop=function(){stream.getTracks().forEach(function(t){t.stop()});$("rec").textContent=d.rec;st.textContent="";if(Sec.chunks.length)setSec(URL.createObjectURL(new Blob(Sec.chunks,{type:r.mimeType||"audio/webm"})))};
+      r.start();$("rec").textContent=d.recStop;st.textContent=d.recOn;
+    }).catch(function(){st.textContent=d.recNo});
+  };
+})();
+
+(function(){
+  function isAr(t){return/[\u0600-\u06FF]/.test(t)}var FA='"Aref Ruqaa","Reem Kufi","Readex Pro",serif',FL='"Readex Pro",system-ui,sans-serif';
+  function wrapT(c,t,mw){var w=t.replace(/\s+/g," ").trim().split(" "),L=[],cur="";w.forEach(function(x){var q=cur?cur+" "+x:x;if(c.measureText(q).width>mw&&cur){L.push(cur);cur=x}else cur=q});if(cur)L.push(cur);return L}
+  $("clipX").onclick=function(){var v=$("clipV");v.pause();$("clipM").hidden=true};
+  $("clip").onclick=function(){
+    var d=S[lang],btn=$("clip");
+    if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){$("clipS").textContent=d.clipNo;return}
+    btn.disabled=true;$("clipS").textContent=d.clipBusy;
+    var cw=720,chh=1280,cvs=document.createElement("canvas");cvs.width=cw;cvs.height=chh;var x=cvs.getContext("2d");
+    var stream=cvs.captureStream(30),aud=null,ac=null,maxMs=6000,hs=[],i;
+    if(Sec.url){
+      try{aud=new Audio();aud.crossOrigin="anonymous";aud.src=Sec.url;ac=new (window.AudioContext||window.webkitAudioContext)();var src=ac.createMediaElementSource(aud),dst=ac.createMediaStreamDestination();src.connect(dst);dst.stream.getAudioTracks().forEach(function(t){stream.addTrack(t)});maxMs=60000}catch(e){aud=null}
+    }
+    var types=["video/mp4;codecs=avc1,mp4a.40.2","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"],mt="";
+    for(i=0;i<types.length;i++){if(MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(types[i])){mt=types[i];break}}
+    var rec;try{rec=mt?new MediaRecorder(stream,{mimeType:mt}):new MediaRecorder(stream)}catch(e){btn.disabled=false;$("clipS").textContent=d.clipNo;return}
+    var chunks=[],t0=0,stopped=false,msg=book.secret,ar=isAr(msg),fam=ar?FA:FL;
+    for(i=0;i<22;i++)hs.push({x:Math.random()*cw,y:chh+Math.random()*chh,s:10+Math.random()*18,v:.8+Math.random()*1.6});
+    function frame(){
+      if(stopped)return;var t=performance.now()-t0;
+      var g=x.createLinearGradient(0,0,0,chh);g.addColorStop(0,"#3A0D2A");g.addColorStop(1,"#1B0A25");x.fillStyle=g;x.fillRect(0,0,cw,chh);
+      x.fillStyle="rgba(243,150,185,.5)";
+      hs.forEach(function(h){h.y-=h.v;if(h.y<-30){h.y=chh+20;h.x=Math.random()*cw}x.save();x.translate(h.x,h.y);x.scale(h.s/10,h.s/10);x.beginPath();x.moveTo(0,9);x.bezierCurveTo(-13,-1,-6,-10,0,-4);x.bezierCurveTo(6,-10,13,-1,0,9);x.fill();x.restore()});
+      x.textAlign="center";x.textBaseline="middle";x.fillStyle="#F3C6D6";x.direction=isAr(book.to)?"rtl":"ltr";x.font="500 40px "+(isAr(book.to)?FA:FL);x.fillText(d.toLbl(book.to),cw/2,360);
+      var n=Math.min(msg.length,Math.floor(t/70)),shown=msg.slice(0,n);
+      x.fillStyle="#FFF3F6";x.direction=ar?"rtl":"ltr";x.font="700 70px "+fam;
+      var full=wrapT(x,msg,600),lh=104,y0=640-(full.length-1)*lh/2,used=0;
+      full.forEach(function(l,k){var take=Math.max(0,Math.min(l.length,n-used));used+=l.length+1;if(take>0)x.fillText(l.slice(0,take),cw/2,y0+k*lh)});
+      x.fillStyle="#F3C6D6";x.direction=isAr(book.from)?"rtl":"ltr";x.font="500 44px "+(isAr(book.from)?FA:FL);x.fillText(book.sig,cw/2,930);
+      x.direction="ltr";x.fillStyle="rgba(243,198,214,.55)";x.font="400 26px "+FL;x.fillText("Lawwenha · لوّنها",cw/2,1200);
+      if(t>=maxMs)return stop();
+      requestAnimationFrame(frame);
+    }
+    function stop(){if(stopped)return;stopped=true;try{rec.stop()}catch(e){}if(aud)aud.pause();try{ac&&ac.close()}catch(e){}}
+    rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+    rec.onstop=function(){
+      var type=rec.mimeType||mt||"video/webm",b=new Blob(chunks,{type:type}),u=URL.createObjectURL(b),ext=/mp4/.test(type)?"mp4":"webm";
+      $("clipV").src=u;$("clipD").href=u;$("clipD").download="lawwenha."+ext;$("clipM").hidden=false;btn.disabled=false;$("clipS").textContent="";
+    };
+    rec.start(250);t0=performance.now();
+    if(aud){aud.onended=stop;aud.play().catch(function(){});if(!isFinite(aud.duration)||!aud.duration){}}
+    else maxMs=Math.max(6000,msg.length*70+2500);
+    requestAnimationFrame(frame);
+  };
+})();
+
+var payReady=false;
+function updPay(){var pb=$("payBar");if(pb)pb.hidden=!(payReady&&!RECV&&!$("play").hidden)}
+try{fetch("/api/checkout").then(function(r){return r.json()}).then(function(j){if(j&&j.ready){payReady=true;updPay()}}).catch(function(){})}catch(e){}
+function jpost(url,b){return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||("http "+r.status));return j})})}
+function toData(u){return fetch(u).then(function(r){return r.blob()}).then(function(b){return new Promise(function(res){var fr=new FileReader();fr.onload=function(){res(String(fr.result).replace(/^data:([^;,]+)[^,]*;base64,/,"data:$1;base64,"))};fr.readAsDataURL(b)})})}
+function sceneData(i){build(i);var sc=book.scenes[i];if(sc.src&&/^data:/.test(sc.src))return sc.src;var c=document.createElement("canvas");c.width=c.height=W;var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,W,W);x.drawImage(pg[i].art,0,0);return c.toDataURL("image/png")}
+$("pay").onclick=function(){
+  var d=S[lang],st=$("payS"),btn=$("pay"),em=($("em").value||"").trim(),id,key,chain;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){st.textContent=d.needEm;return}
+  if(!$("consent").checked){st.textContent=d.needConsent;return}
+  btn.disabled=true;st.textContent=d.paying;
+  jpost("/api/book",{action:"create",lang:lang,to:book.to,from:book.from,secret:book.secret,sig:book.sig,email:em,answers:book.raw,style:Mus.style==="file"?"off":Mus.style}).then(function(j){
+    id=j.id;key=j.key;try{localStorage.setItem("lw_key_"+id,key)}catch(e){}
+    chain=Promise.resolve();
+    [0,1,2,3,4,5].forEach(function(i){chain=chain.then(function(){st.textContent=d.upl(i+1,6);return jpost("/api/book?id="+id+"&key="+key+"&kind=scene&idx="+i,{image:sceneData(i)})})});
+    return chain;
+  }).then(function(){
+    if(!Sec.url)return;
+    return toData(Sec.url).then(function(du){if(du.length>4.3e6)throw new Error(d.bigAudio);return jpost("/api/book?id="+id+"&key="+key+"&kind=audio",{audio:du})});
+  }).then(function(){return jpost("/api/checkout",{id:id,key:key})}).then(function(j){location.href=j.url}).catch(function(e){btn.disabled=false;st.textContent=d.payFail+" ("+e.message+")"});
+};
+function qs(n){try{return new URLSearchParams(location.search).get(n)}catch(e){return null}}
+function showDone(t,p,link){
+  var d=S[lang];$("make").hidden=true;$("done").hidden=false;$("doneT").textContent=t;$("doneP").textContent=p||"";
+  if(link){$("doneR").hidden=false;$("doneL").value=link;$("doneC").textContent=d.copy}
+}
+$("doneC").onclick=function(){var d=S[lang],v=$("doneL");try{navigator.clipboard.writeText(v.value).then(function(){$("doneC").textContent=d.copied})}catch(e){}v.select()};
+function handlePaid(){
+  var d=S[lang],id=qs("id"),key="";try{key=localStorage.getItem("lw_key_"+id)||""}catch(e){}
+  showDone(d.doneWait,"");
+  fetch("/api/verify?id="+encodeURIComponent(id)+"&key="+encodeURIComponent(key)+"&session_id="+encodeURIComponent(qs("session_id")||"")).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||"x");return j})}).then(function(j){
+    showDone(d.doneT,j.emailed?d.doneEm:d.doneNoEm,j.link);
+  }).catch(function(e){showDone(d.payFail,String(e.message||e))});
+}
+function loadRecipient(id){
+  RECV=true;$("app").classList.add("recv");document.body.classList.add("recvb");
+  fetch("/api/book?id="+encodeURIComponent(id)).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error("nf");return j})}).then(function(j){
+    lang=j.lang==="en"?"en":"ar";applyLang();buildForm(false);
+    book={to:j.to,from:j.from,secret:j.secret,sig:j.sig||"",scenes:[],raw:j.answers||{}};
+    Q.forEach(function(qq,i){book.scenes.push({art:qq.art,cap:qq[lang].c(book.raw[qq.id]||""),seed:i*31+7,src:j.scenes[i]})});
+    if(j.audio)Sec.url=j.audio;
+    var st=["piano","oud","sea","rain"].indexOf(j.style)>=0?j.style:"off";$("ms").value=st;readStyle();
+    return Promise.all(j.scenes.map(function(u,i){return new Promise(function(res){var im=new Image();im.crossOrigin="anonymous";im.onload=function(){book.scenes[i].img=im;res()};im.onerror=function(){res()};im.src=u})}));
+  }).then(function(){pg=[];cur=0;showTab(true)}).catch(function(){showDone(S[lang].notFound,"")});
+}
+var JSPDF_SRC="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+function loadJsPdf(){return new Promise(function(res,rej){if(window.jspdf)return res(window.jspdf.jsPDF);var s=document.createElement("script");s.src=JSPDF_SRC;s.onload=function(){res(window.jspdf.jsPDF)};s.onerror=function(){rej(new Error("pdf"))};document.head.appendChild(s)})}
+function pdfWrap(x,t,mw){var w=String(t).replace(/\s+/g," ").trim().split(" "),L=[],cur="";w.forEach(function(a){var q=cur?cur+" "+a:a;if(x.measureText(q).width>mw&&cur){L.push(cur);cur=a}else cur=q});if(cur)L.push(cur);return L}
+function pdfPage(){var c=document.createElement("canvas");c.width=1240;c.height=1754;var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,1240,1754);x.strokeStyle="#17152B";x.lineWidth=3;x.strokeRect(36,36,1168,1682);x.lineWidth=1.5;x.strokeRect(52,52,1136,1650);x.textAlign="center";x.textBaseline="middle";x.fillStyle="#17152B";return[c,x]}
+function pdfText(x,t,y,size,mw,lh){var ar=/[\u0600-\u06FF]/.test(t);x.direction=ar?"rtl":"ltr";x.font="700 "+size+"px "+(ar?'"Aref Ruqaa","Reem Kufi",serif':'"Readex Pro",sans-serif');var L=pdfWrap(x,t,mw);L.forEach(function(l,i){x.fillText(l,620,y+i*lh)});return L.length}
+$("pdf").onclick=function(){
+  var d=S[lang],st=$("clipS");st.textContent=d.pdfBusy;
+  var txt=book.to+book.secret+book.scenes.map(function(s){return s.cap}).join("");
+  Promise.all([loadJsPdf(),Promise.race([document.fonts.load('700 40px "Aref Ruqaa"',txt),new Promise(function(r){setTimeout(r,2500)})]).catch(function(){})]).then(function(a){
+    var J=a[0],doc=new J({unit:"pt",format:"a4",orientation:"portrait"}),pw=595.28,ph=841.89,pages=[],i,P,c,x;
+    P=pdfPage();c=P[0];x=P[1];x.font="700 70px "+'"Aref Ruqaa","Reem Kufi",serif';x.direction=lang==="ar"?"rtl":"ltr";x.fillText(d.pdfT,620,420);
+    pdfText(x,d.toLbl(book.to),900,110,1000,140);x.font="400 30px sans-serif";x.direction="ltr";x.fillStyle="#6B6888";x.fillText("Lawwenha",620,1640);pages.push(c);
+    for(i=0;i<book.scenes.length;i++){
+      build(i);P=pdfPage();c=P[0];x=P[1];
+      x.drawImage(pg[i].art,0,0,W,W,90,130,1060,1060);
+      x.save();x.globalCompositeOperation="destination-over";x.fillStyle="#fff";x.fillRect(90,130,1060,1060);x.restore();
+      x.fillStyle="#17152B";pdfText(x,book.scenes[i].cap,1340,56,1000,86);
+      x.direction="ltr";x.font="400 28px sans-serif";x.fillStyle="#6B6888";x.fillText(String(i+1)+" / "+book.scenes.length,620,1650);pages.push(c);
+    }
+    P=pdfPage();c=P[0];x=P[1];x.font="500 56px "+'"Aref Ruqaa","Reem Kufi",serif';x.direction=/[\u0600-\u06FF]/.test(book.to)?"rtl":"ltr";x.fillText(d.toLbl(book.to),620,520);
+    var n=pdfText(x,book.secret,760,92,950,140);if(book.sig){x.fillStyle="#6B6888";pdfText(x,book.sig,760+n*140+60,48,900,70)}pages.push(c);
+    pages.forEach(function(cv,k){if(k)doc.addPage();doc.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",0,0,pw,ph)});
+    st.textContent="";doc.save("lawwenha-book.pdf");
+  }).catch(function(){st.textContent=d.payFail});
+};
+applyLang();buildForm(false);$("to").value=S.ar.samples.to;$("from").value=S.ar.samples.from;$("sec").value=S.ar.samples.sec;
+(function(){var m=location.pathname.match(/\/b\/([0-9a-f-]{36})/i),bid=m?m[1]:qs("b");if(qs("paid")&&qs("id"))handlePaid();else if(bid)loadRecipient(bid);else if(qs("cancel")){showDone(S[lang].cancelled,"");$("make").hidden=false}})();
+})();
+</script>

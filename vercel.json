@@ -1,0 +1,4 @@
+{
+  "functions": { "api/scene.js": { "maxDuration": 60 }, "api/book.js": { "maxDuration": 30 } },
+  "rewrites": [{ "source": "/b/:id", "destination": "/index.html" }]
+}
