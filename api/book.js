@@ -22,6 +22,7 @@ module.exports = async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return res.status(400).json({ error: "bad_email" });
     const a = b.answers && typeof b.answers === "object" ? b.answers : {};
     const answers = {}; ["q1", "q2", "q3", "q4", "q5", "q6"].forEach(k => { answers[k] = L.clip(a[k], 120); });
+    answers.k = ["love", "friends", "family"].includes(a.k) ? a.k : "love";
     const key = L.newKey();
     const row = { key, lang: b.lang === "en" ? "en" : "ar", to_name: L.clip(b.to, 24), from_name: L.clip(b.from, 24), secret: L.clip(b.secret, 120), sig: L.clip(b.sig, 60), email, answers, style: L.clip(b.style, 10) };
     const r = await L.sb("/rest/v1/books", { method: "POST", headers: L.sbHeaders({ "Content-Type": "application/json", Prefer: "return=representation" }), body: JSON.stringify(row) });
@@ -39,7 +40,7 @@ module.exports = async (req, res) => {
     const idx = parseInt(q.idx, 10);
     if (!(idx >= 0 && idx <= 5)) return res.status(400).json({ error: "bad_idx" });
     if (!/^image\/(png|jpeg|webp)$/.test(m[1]) || buf.length > 3.2e6) return res.status(400).json({ error: "bad_image" });
-    const r = await L.upload(book.id + "/scene" + idx + ".png", buf, "image/png");
+    const r = await L.upload(book.id + "/scene" + idx + ".png", buf, m[1]);
     return r.ok ? res.status(200).json({ ok: true }) : res.status(502).json({ error: "storage", status: r.status });
   }
   if (q.kind === "audio") {
