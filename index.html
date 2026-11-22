@@ -52,7 +52,8 @@ h2.sec{font:700 1.2rem var(--display);margin:0}
 @media (min-width:900px){.stage{grid-template-columns:minmax(0,620px) minmax(0,1fr);align-items:start}}
 .paper{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(36,26,43,.14)}
 .paper canvas{display:block;width:100%;height:auto;aspect-ratio:1;touch-action:manipulation;cursor:crosshair}
-.cap{font:700 1.35rem/1.5 var(--script);text-align:center;padding:12px 4px 2px;text-wrap:balance}
+.cap.hint{opacity:.55;font-weight:400;font-size:1rem}
+.cap{min-height:3.4em;font:700 1.35rem/1.5 var(--script);text-align:center;padding:12px 4px 2px;text-wrap:balance}
 .nav{display:flex;gap:8px;flex-wrap:wrap}
 .nav button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:700;position:relative}
 .nav button[aria-current="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
@@ -141,39 +142,39 @@ footer{color:var(--muted);font-size:.85rem}
   </div>
 
   <section class="hero">
-    <h1 data-t="h1">كتاب تلوين من قصتكم أنتم، وآخر صفحة فيه سر</h1>
-    <p data-t="sub">تجاوب على أسئلة بسيطة عن علاقتكم، فكل صفحة تصير مشهد من قصتكم للتلوين. هي تلوّن الكتاب على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما تخلّصه، وتلقى فيها رسالتك.</p>
+    <h1 data-t="h1">كتاب تلوين من ذكرياتكم أنتم، وآخر صفحة فيه سر</h1>
+    <p data-t="sub">تجاوب على أسئلة بسيطة عن علاقتكم، فكل صفحة تصير مشهد من ذكرياتكم للتلوين. الكتاب يتلوّن على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما يكتمل التلوين، وتظهر فيها رسالتك.</p>
   </section>
 
   <main id="make" class="grid">
     <form class="box" id="f">
+      <div class="row" id="kinds" role="group" style="gap:8px"><button type="button" class="pill" data-k="love" aria-pressed="true"></button><button type="button" class="pill" data-k="friends" aria-pressed="false"></button><button type="button" class="pill" data-k="family" aria-pressed="false"></button></div>
       <div class="two">
-        <div class="f"><label class="lbl" for="to" data-t="to">اسمها</label><input class="in" id="to" maxlength="24"></div>
+        <div class="f"><label class="lbl" for="to" data-t="to">اسم الشخص اللي تهديه</label><input class="in" id="to" maxlength="24"></div>
         <div class="f"><label class="lbl" for="from" data-t="from">اسمك</label><input class="in" id="from" maxlength="24"></div>
       </div>
       <div id="qs" style="display:contents"></div>
       <div class="f"><label class="lbl" for="ms" data-t="ms">الموسيقى اللي تحبها أثناء التلوين</label>
-        <select class="in" id="ms"><option value="off" data-t="mo_off">بدون موسيقى</option><option value="piano" data-t="mo_piano">بيانو هادئ</option><option value="oud" data-t="mo_oud">عود شرقي هادئ</option><option value="sea" data-t="mo_sea">أمواج البحر</option><option value="rain" data-t="mo_rain">مطر خفيف</option><option value="file" data-t="mo_file">أغنيتها المفضلة (ارفع ملف)</option></select>
-        <input class="in" id="song" type="file" accept="audio/*" hidden>
-        <div class="lbl" style="font-weight:400" data-t="songN">اختر الموسيقى اللي تحبها، وتشتغل لها أثناء التلوين ويقدر توقفها. لو رفعت أغنية تأكد أن عندك حق استخدامها.</div></div>
-      <div class="f"><label class="lbl" for="sec" data-t="sec">رسالة السر (تظهر لها في الصفحة الأخيرة)</label><input class="in" id="sec" maxlength="80"></div>
+        <select class="in" id="ms"><option value="soft" data-t="mo_soft">موسيقى هادئة أثناء التلوين</option><option value="off" data-t="mo_off">بدون موسيقى</option></select>
+                <div class="lbl" style="font-weight:400" data-t="songN">اختر الموسيقى اللي تحبها، وتشتغل أثناء التلوين ويقدر يوقفها. لو رفعت أغنية تأكد أن عندك حق استخدامها.</div></div>
+      <div class="f"><label class="lbl" for="sec" data-t="sec">رسالة السر (تظهر في الصفحة الأخيرة)</label><input class="in" id="sec" maxlength="120"></div>
       <div class="f"><label class="lbl" for="sig" data-t="sig">سطر ختام تكتبه بنفسك (اختياري)</label><input class="in" id="sig" maxlength="60"></div>
       <div class="f"><label class="lbl" for="sa" data-t="sa">رسالة صوتية أو مقطع أغنية للصفحة الأخيرة (اختياري)</label>
         <div class="row"><input class="in" id="sa" type="file" accept="audio/*" style="flex:1 1 180px"><button class="btn alt" id="rec" type="button"></button></div>
-        <div class="lbl" id="recS" style="font-weight:400" role="status"></div><audio id="sap" controls hidden style="width:100%"></audio>
-        <div class="lbl" style="font-weight:400" data-t="saN">تُشغَّل لها لما تنفتح الصفحة الأخيرة مع رسالتك. التسجيل المباشر يشتغل في الموقع بعد النشر، وإذا ما اشتغل ارفع ملف صوتي.</div></div>
-      <div class="f"><label class="lbl" for="em" data-t="em">بريدها الإلكتروني</label><input class="in" id="em" type="email" dir="ltr" placeholder="name@example.com"></div>
-      <button class="btn" id="go" type="submit" data-t="go">جهّز الكتاب وشوف كيف يوصلها</button>
+        <div class="lbl" id="recS" style="font-weight:400" role="status"></div><div class="lbl" id="audInfo" style="font-weight:600" role="status"></div><audio id="sap" controls hidden style="width:100%"></audio>
+        <div class="lbl" style="font-weight:400" data-t="saN">تُشغَّل لما تنفتح الصفحة الأخيرة مع رسالتك. التسجيل المباشر يشتغل في الموقع بعد النشر، وإذا ما اشتغل ارفع ملف صوتي.</div></div>
+      <div class="f"><label class="lbl" for="em" data-t="em">البريد الإلكتروني للمُهدى إليه</label><input class="in" id="em" type="email" dir="ltr" placeholder="name@example.com"></div>
+      <button class="btn" id="go" type="submit" data-t="go">جهّز الكتاب وشوف كيف يوصل</button>
     </form>
     <aside class="box">
       <h2 class="sec" data-t="how">كيف يشتغل</h2>
       <ol class="steps">
-        <li><span class="dot">1</span><span data-t="s1">تجاوب على ٦ أسئلة عن قصتكم، وتكتب رسالتك السرية.</span></li>
-        <li><span class="dot">2</span><span data-t="s2">يتجهّز كتاب من ٦ مشاهد مرسومة للتلوين، تحت كل مشهد جملة من قصتكم.</span></li>
-        <li><span class="dot">3</span><span data-t="s3">يوصلها رابط على بريدها، وتلوّن الكتاب على الجوال أو تطبعه.</span></li>
-        <li><span class="dot">4</span><span data-t="s4">لما تخلّص التلوين تنفتح الصفحة الأخيرة وتظهر رسالتك.</span></li>
+        <li><span class="dot">1</span><span data-t="s1">تجاوب على ٦ أسئلة عن ذكرياتكم، وتكتب رسالتك السرية.</span></li>
+        <li><span class="dot">2</span><span data-t="s2">يتجهّز كتاب من ٦ مشاهد مرسومة للتلوين، تحت كل مشهد جملة من ذكرياتكم.</span></li>
+        <li><span class="dot">3</span><span data-t="s3">يوصل رابط الكتاب على البريد الإلكتروني، ويتلوّن على الجوال.</span></li>
+        <li><span class="dot">4</span><span data-t="s4">لما يكتمل التلوين تنفتح الصفحة الأخيرة وتظهر رسالتك.</span></li>
       </ol>
-      <div class="note" data-t="demoNote">هذي نسخة تجريبية. الرسومات هنا مرسومة بالكود، وفي النسخة الفعلية تُولَّد رسمة فنية لكل مشهد من تفاصيل قصتكم.</div>
+      <div class="note" data-t="demoNote">هذي نسخة تجريبية. الرسومات هنا مرسومة بالكود، وفي النسخة الفعلية تُولَّد رسمة فنية لكل مشهد من تفاصيل ذكرياتكم.</div>
     </aside>
   </main>
 
@@ -183,15 +184,15 @@ footer{color:var(--muted);font-size:.85rem}
       <div class="t1 gold" data-t="introT">كتاب تلوين خاص</div>
       <svg class="orn" viewBox="0 0 260 18" aria-hidden="true"><g fill="none" stroke="#C9A24B" stroke-width="1.5"><path d="M6 9H112M148 9H254"/><path d="M130 1l8 8-8 8-8-8z"/><circle cx="116" cy="9" r="2.5"/><circle cx="144" cy="9" r="2.5"/></g></svg>
       <div class="t2 gold" id="inTo"></div>
-      <div class="t3 gold" id="inMsg" data-t="introM">هدية رقمية فيها قصتكم</div>
-      <button class="open" id="inOpen" type="button" data-t="introB">افتحي هديتك</button>
+      <div class="t3 gold" id="inMsg" data-t="introM">صُنِعَتْ هٰذِهِ الهَدِيَّةُ لَك وَحْدَك</div>
+      <button class="open" id="inOpen" type="button" data-t="introB">افتح هديتك</button>
     </div>
   </div>
   <div id="done" class="box" hidden style="align-items:center;text-align:center"><div class="big" id="doneT" style="font:700 1.3rem var(--display)"></div><div class="lbl" id="doneP"></div><div class="row" id="doneR" hidden style="justify-content:center;width:100%"><input class="in" id="doneL" readonly dir="ltr" style="max-width:420px"><button class="btn" id="doneC" type="button"></button></div></div>
   <section id="play" hidden>
     <div class="box" id="payBar" hidden style="margin-bottom:16px">
       <label class="row" style="gap:8px;align-items:flex-start"><input type="checkbox" id="consent" style="margin-top:5px"><span><span data-t="consent">أوافق على</span> <a href="terms.html" target="_blank" rel="noopener" data-t="terms">الشروط</a> <span data-t="and">و</span> <a href="privacy.html" target="_blank" rel="noopener" data-t="privacy">سياسة الخصوصية</a></span></label>
-      <div class="row"><button class="btn" id="pay" type="button" data-t="pay">ادفع وأرسل لها</button><span class="lbl" data-t="payNote">بعد الدفع يوصلها رابط الكتاب على بريدها مباشرة.</span></div>
+      <div class="row"><button class="btn" id="pay" type="button" data-t="pay">ادفع وأرسل الهدية</button><span class="lbl" data-t="payNote">بعد الدفع يوصل رابط الكتاب على البريد الإلكتروني مباشرة.</span></div>
       <div class="lbl" id="payS" role="status" style="color:var(--accent)"></div>
     </div>
     <div class="stage">
@@ -347,16 +348,41 @@ arch:function(c){
 var Q=[
  {id:"q1",art:"arch",ar:{l:"وين تعرفتوا؟",p:"مقهى صغير في دبي",c:function(v){return"هنا بدأت قصتنا: "+v}},en:{l:"Where did you meet?",p:"A small café in Dubai",c:function(v){return"This is where our story began: "+v}}},
  {id:"q2",art:"butterfly",ar:{l:"أول موقف ضحكتوا عليه؟",p:"لما انسكبت القهوة على الطاولة",c:function(v){return"وأول ضحكة بيننا: "+v}},en:{l:"The first thing you laughed about?",p:"When the coffee spilled on the table",c:function(v){return"And our first laugh: "+v}}},
- {id:"q3",art:"moon",ar:{l:"مكان يذكّرك فيها؟",p:"الكورنيش وقت الغروب",c:function(v){return"ومكان كل ما مريت فيه تذكرتك: "+v}},en:{l:"A place that reminds you of her?",p:"The seafront at sunset",c:function(v){return"A place I never pass without thinking of you: "+v}}},
- {id:"q4",art:"floral",ar:{l:"شي تحبه فيها؟",p:"ضحكتها وطريقتها لما تتحمس",c:function(v){return"وأحب فيك: "+v}},en:{l:"Something you love about her?",p:"Her laugh and how she gets excited",c:function(v){return"And what I love about you: "+v}}},
- {id:"q5",art:"lock",ar:{l:"لقب تناديها فيه؟",p:"قمر",c:function(v){return"وبين كل الناس، لقبك عندي: "+v}},en:{l:"A nickname you call her?",p:"Moonlight",c:function(v){return"Among everyone, my name for you: "+v}}},
+ {id:"q3",art:"moon",ar:{l:"مكان يذكّرك بالشخص اللي تهديه؟",p:"الكورنيش وقت الغروب",c:function(v){return"ومكان كل ما مريت فيه تذكرتك: "+v}},en:{l:"A place that reminds you of them?",p:"The seafront at sunset",c:function(v){return"A place I never pass without thinking of you: "+v}}},
+ {id:"q4",art:"floral",ar:{l:"وش أكثر شي تحبه فيه؟",p:"ضحكته وحماسه",c:function(v){return"وأحب فيك: "+v}},en:{l:"Something you love about them?",p:"Their laugh and their excitement",c:function(v){return"And what I love about you: "+v}}},
+ {id:"q5",art:"lock",ar:{l:"وش لقب الدلع بينكم؟",p:"قمر",c:function(v){return"وبين كل الناس، لقبك عندي: "+v}},en:{l:"Your pet name for each other?",p:"Moonlight",c:function(v){return"Among everyone, my name for you: "+v}}},
  {id:"q6",art:"rings",ar:{l:"حلمكم الجاي؟",p:"بيت صغير نلوّن حيطانه مع بعض",c:function(v){return"وحلمنا الجاي: "+v}},en:{l:"Your dream for the future?",p:"A little home whose walls we colour together",c:function(v){return"And our dream ahead: "+v}}}
 ];
+var QS={love:Q};
+QS.friends=[
+ {id:"q1",art:"arch",ar:{l:"وين تعرفتوا؟",p:"في المدرسة، أول يوم",c:function(v){return"هنا بدأت صداقتنا: "+v}},en:{l:"Where did you meet?",p:"At school, on the first day",c:function(v){return"This is where our friendship began: "+v}}},
+ {id:"q2",art:"butterfly",ar:{l:"أطرف موقف ضحكتوا عليه؟",p:"لما ضعنا في الطريق في السفرة",c:function(v){return"وأضحك موقف بيننا: "+v}},en:{l:"The funniest thing you laughed about?",p:"When we got lost on the trip",c:function(v){return"And our funniest moment: "+v}}},
+ {id:"q3",art:"moon",ar:{l:"مكان يجمعكم دايماً؟",p:"الكافيه حق الشلة",c:function(v){return"ومكان نحبه سوا: "+v}},en:{l:"A place you always meet at?",p:"Our usual café",c:function(v){return"And a place we love together: "+v}}},
+ {id:"q4",art:"floral",ar:{l:"وش تحبه فيه؟",p:"وقفته معي وقت الشدة",c:function(v){return"وأحب فيك: "+v}},en:{l:"What do you love about them?",p:"How they stood by me when it was hard",c:function(v){return"And what I love about you: "+v}}},
+ {id:"q5",art:"lock",ar:{l:"كلمة سر أو لقب بينكم؟",p:"يا شيخ",c:function(v){return"وبيننا كلمة ما يفهمها إلا إحنا: "+v}},en:{l:"An inside joke or nickname?",p:"Legend",c:function(v){return"And a word only we understand: "+v}}},
+ {id:"q6",art:"rings",ar:{l:"خطتكم الجاية؟",p:"رحلة نسافرها مع بعض",c:function(v){return"وخطتنا الجاية: "+v}},en:{l:"Your next plan together?",p:"A trip we take together",c:function(v){return"And our next plan: "+v}}}
+];
+QS.family=[
+ {id:"q1",art:"arch",ar:{l:"أجمل ذكرى معه من الطفولة؟",p:"لما كنا نطلع البر ونشوي",c:function(v){return"أجمل ذكرى من الطفولة: "+v}},en:{l:"Your happiest childhood memory with them?",p:"When we went camping and grilled together",c:function(v){return"My happiest childhood memory: "+v}}},
+ {id:"q2",art:"butterfly",ar:{l:"أكلة أو عادة تجمعكم؟",p:"غداء الجمعة عند الجدة",c:function(v){return"وشي يجمعنا دايماً: "+v}},en:{l:"A meal or tradition that brings you together?",p:"Friday lunch at grandma's",c:function(v){return"And what always brings us together: "+v}}},
+ {id:"q3",art:"moon",ar:{l:"مكان يذكرك فيه؟",p:"بيتنا القديم",c:function(v){return"ومكان كل ما مريت فيه تذكرتك: "+v}},en:{l:"A place that reminds you of them?",p:"Our old house",c:function(v){return"A place I never pass without thinking of you: "+v}}},
+ {id:"q4",art:"floral",ar:{l:"وش علّمك؟",p:"الصبر والكرم",c:function(v){return"وأكثر شي تعلمته منك: "+v}},en:{l:"What did they teach you?",p:"Patience and generosity",c:function(v){return"And what I learned most from you: "+v}}},
+ {id:"q5",art:"lock",ar:{l:"كلمة يقولها دايماً؟",p:"الله يوفقك",c:function(v){return"وكلمتك اللي ما تفارق قلبي: "+v}},en:{l:"A phrase they always say?",p:"God bless you",c:function(v){return"Your words that never leave my heart: "+v}}},
+ {id:"q6",art:"rings",ar:{l:"أمنيتك له؟",p:"صحة وعمر طويل",c:function(v){return"وأمنيتي لك: "+v}},en:{l:"Your wish for them?",p:"Health and a long life",c:function(v){return"And my wish for you: "+v}}}
+];
+var KIND="love",KS={love:{}},KT={ar:{love:"إهداء لمن تحب",friends:"إهداء للأصدقاء",family:"إهداء للعائلة"},en:{love:"For someone you love",friends:"For friends",family:"For family"}};
+KS.friends={
+ ar:{to:"اسم صديقك أو صديقتك",from:"اسمك",sec:"رسالة السر (تظهر في الصفحة الأخيرة)",em:"البريد الإلكتروني لمن تهديه",introM:"صُنِعَتْ لَك مِنْ أَجْمَلِ ذِكْرَيَاتِنَا",h1:"كتاب تلوين من ذكرياتكم، وآخر صفحة فيه مفاجأة",sub:"جاوب على أسئلة عن صداقتكم، فكل صفحة تصير مشهد من ذكرياتكم للتلوين. الكتاب يتلوّن على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما يكتمل التلوين، وتظهر فيها رسالتك.",samples:{to:"فهد",from:"سلطان",sec:"الدنيا أحلى بوجودك، وأيامنا مع بعض أجمل شي صار لي. شكراً إنك صاحبي.",q1:"في المدرسة، أول يوم",q2:"لما ضعنا في الطريق في السفرة",q3:"الكافيه حق الشلة",q4:"وقفتك معي وقت الشدة",q5:"يا شيخ",q6:"رحلة نسافرها مع بعض"}},
+ en:{to:"Your friend's name",from:"Your name",sec:"Secret message (shown on the last page)",em:"Email of the person you are gifting",introM:"Made for you from our best memories",h1:"A colouring book of your memories, with a surprise on the last page",sub:"Answer a few questions about your friendship and every page becomes a scene from your memories. The book is coloured on screen, and the last page only opens once it is finished, with your message inside.",samples:{to:"Fahad",from:"Sultan",sec:"Life is better with you, and our days together are the best thing that happened to me. Thank you for being my friend.",q1:"At school, on the first day",q2:"When we got lost on the trip",q3:"Our usual café",q4:"How you stood by me when it was hard",q5:"Legend",q6:"A trip we take together"}}};
+KS.family={
+ ar:{to:"اسم الشخص اللي تهديه (أمي، أبوي، أخوي...)",from:"اسمك",sec:"رسالة من قلبك (تظهر في الصفحة الأخيرة)",em:"البريد الإلكتروني لمن تهديه",introM:"صُنِعَتْ لَك مِنَ القَلْبِ",h1:"كتاب تلوين من ذكرياتكم العائلية، وآخر صفحة فيه رسالة من القلب",sub:"جاوب على أسئلة عن عيلتكم، فكل صفحة تصير مشهد من ذكرياتكم للتلوين. الكتاب يتلوّن على الشاشة، وفي آخر صفحة تظهر رسالتك.",samples:{to:"أمي",from:"ناصر",sec:"الله يخليك لنا، وكل شي حلو فيني منك. هذي هدية بسيطة تحمل حبي كله.",q1:"لما كنا نطلع البر ونشوي",q2:"غداء الجمعة عند الجدة",q3:"بيتنا القديم",q4:"الصبر والكرم",q5:"الله يوفقك",q6:"صحة وعمر طويل"}},
+ en:{to:"Their name (Mum, Dad, brother...)",from:"Your name",sec:"A message from the heart (shown on the last page)",em:"Email of the person you are gifting",introM:"Made for you, from the heart",h1:"A colouring book of your family memories, with a message from the heart",sub:"Answer a few questions about your family and every page becomes a scene from your memories. The book is coloured on screen and your message appears on the last page.",samples:{to:"Mum",from:"Nasser",sec:"May God keep you for us. Everything good in me is from you. This is a small gift that carries all my love.",q1:"When we went camping and grilled together",q2:"Friday lunch at grandma's",q3:"Our old house",q4:"Patience and generosity",q5:"God bless you",q6:"Health and a long life"}}};
+
 var S={
-ar:{genT:function(n,t){return"جاري رسم المشهد "+n+" من "+t+"، نصف دقيقة تقريباً لكل مشهد"},mOn:"الموسيقى: تشغيل",introT:"كتاب تلوين خاص",introM:"هدية رقمية فيها قصتكم",introB:"افتحي هديتك",pay:"ادفع وأرسل لها",payNote:"بعد الدفع يوصلها رابط الكتاب على بريدها مباشرة.",consent:"أوافق على",terms:"الشروط",privacy:"سياسة الخصوصية",and:"و",needEm:"اكتب بريدها في خانة «بريدها الإلكتروني» في تبويب «أنا أهدي».",needConsent:"لازم توافق على الشروط وسياسة الخصوصية.",paying:"جاري التجهيز...",upl:function(i,n){return"جاري حفظ المشهد "+i+" من "+n},bigAudio:"ملف الصوت كبير (أكثر من 3 ميجا). صغّره وجرّب مرة ثانية.",payFail:"تعذّر إكمال الطلب",doneWait:"جاري تأكيد الدفع...",doneT:"تم الدفع. كتابك في طريقه إليها",doneEm:"أرسلنا الرابط إلى بريدها. وهذا رابط الكتاب لو حبيت ترسله بنفسك:",doneNoEm:"تم الدفع. هذا رابط الكتاب، أرسله لها:",copy:"نسخ الرابط",copied:"تم النسخ",notFound:"الكتاب غير موجود أو لم يُدفع بعد.",cancelled:"تم إلغاء الدفع. تقدر تجرّب مرة ثانية.",pdf:"تحميل PDF للطباعة",pdfBusy:"جاري تجهيز ملف PDF...",pdfT:"كتاب تلوين خاص",sig:"سطر ختام تكتبه بنفسك (اختياري)",clip:"حمّل المقطع (الكتابة مع الصوت)",clipBusy:"جاري تجهيز المقطع، يستغرق مدة الصوت تقريباً. لا تغلق الصفحة.",clipNo:"المتصفح هذا لا يدعم تجهيز المقطع.",clipT:"مقطعك جاهز",dl:"تنزيل",clipH:"في الموقع المنشور زر «تنزيل» يحفظ المقطع مباشرة. إذا ما اشتغل، اضغط مطولاً على الفيديو واختر حفظ.",cl:"إغلاق",ms:"الموسيقى اللي تحبها أثناء التلوين",mo_off:"بدون موسيقى",mo_piano:"بيانو هادئ",mo_oud:"عود شرقي هادئ",mo_sea:"أمواج البحر",mo_rain:"مطر خفيف",mo_file:"أغنيتها المفضلة (ارفع ملف)",sa:"رسالة صوتية أو مقطع أغنية للصفحة الأخيرة (اختياري)",saN:"تُشغَّل لها لما تنفتح الصفحة الأخيرة مع رسالتك. التسجيل المباشر يشتغل في الموقع بعد النشر، وإذا ما اشتغل ارفع ملف صوتي.",rec:"سجّل رسالة صوتية",recStop:"أوقف التسجيل",recOn:"جاري التسجيل...",recNo:"التسجيل غير متاح هنا. ارفع ملفًا صوتيًا بدلاً منه.",mOff:"الموسيقى: إيقاف",song:"مقطع من أغنيتها المفضلة (اختياري)",songN:"اختر الموسيقى اللي تحبها، وتشتغل لها أثناء التلوين ويقدر توقفها. لو رفعت أغنية تأكد أن عندك حق استخدامها.",brand:"لوّنها",tMake:"أنا أهدي",tPlay:"كيف تستلمه",h1:"كتاب تلوين من قصتكم أنتم، وآخر صفحة فيه سر",sub:"تجاوب على أسئلة بسيطة عن علاقتكم، فكل صفحة تصير مشهد من قصتكم للتلوين. هي تلوّن الكتاب على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما تخلّصه، وتلقى فيها رسالتك.",to:"اسمها",from:"اسمك",sec:"رسالة السر (تظهر لها في الصفحة الأخيرة)",em:"بريدها الإلكتروني",go:"جهّز الكتاب وشوف كيف يوصلها",how:"كيف يشتغل",s1:"تجاوب على ٦ أسئلة عن قصتكم، وتكتب رسالتك السرية.",s2:"يتجهّز كتاب من ٦ مشاهد مرسومة للتلوين، تحت كل مشهد جملة من قصتكم.",s3:"يوصلها رابط على بريدها، وتلوّن الكتاب على الجوال أو تطبعه.",s4:"لما تخلّص التلوين تنفتح الصفحة الأخيرة وتظهر رسالتك.",demoNote:"هذي نسخة تجريبية. الرسومات هنا مرسومة بالكود، وفي النسخة الفعلية تُولَّد رسمة فنية لكل مشهد من تفاصيل قصتكم.",colors:"الألوان",und:"تراجع",rnd:"لوّنها لي (للتجربة)",clr:"مسح",prev:"السابقة",next:"التالية",foot:"التلوين يتم داخل متصفحك.",
- prog:function(p){return"لوّنتِ "+Math.round(p*100)+"% من هذي الصفحة (يكفي 50%)"},lockT:"الصفحة الأخيرة مقفلة",lockP:function(n,t){return"لوّني كل المشاهد لين تنفتح. أنجزتِ "+n+" من "+t},open:"افتحي السر",cover:"من ",secTitle:"الصفحة الأخيرة",lang:"English",eraser:"ممحاة",custom:"لون مخصص",toLbl:function(t){return"إلى "+t},byLbl:function(f){return"لكِ دائماً، "+f},samples:{to:"ريم",from:"خالد",sec:"تتزوجيني يا ريم؟",q1:"مقهى صغير في دبي مول",q2:"لما انسكبت القهوة على الطاولة",q3:"الكورنيش وقت الغروب",q4:"ضحكتك وطريقتك لما تتحمسين",q5:"قمر",q6:"بيت صغير نلوّن حيطانه مع بعض"}},
-en:{genT:function(n,t){return"Drawing scene "+n+" of "+t+", about half a minute each"},mOn:"Music: on",introT:"A PERSONAL COLOURING BOOK",introM:"A digital gift made from your story",introB:"Open your gift",pay:"Pay and send to her",payNote:"After payment the book link reaches her email right away.",consent:"I agree to the",terms:"Terms",privacy:"Privacy Policy",and:"and",needEm:"Enter her email in the \"Her email\" field on the \"I'm gifting\" tab.",needConsent:"You need to accept the Terms and Privacy Policy.",paying:"Preparing...",upl:function(i,n){return"Saving scene "+i+" of "+n},bigAudio:"The audio file is large (over 3 MB). Make it smaller and try again.",payFail:"Could not complete the order",doneWait:"Confirming payment...",doneT:"Paid. Your book is on its way to her",doneEm:"We emailed her the link. Here it is if you want to send it yourself:",doneNoEm:"Paid. Here is the book link, send it to her:",copy:"Copy link",copied:"Copied",notFound:"This book does not exist or has not been paid for yet.",cancelled:"Payment cancelled. You can try again.",pdf:"Download print PDF",pdfBusy:"Preparing the PDF...",pdfT:"A personal colouring book",sig:"A closing line in your own words (optional)",clip:"Download the clip (message with audio)",clipBusy:"Preparing your clip, it takes about as long as the audio. Keep this page open.",clipNo:"This browser cannot prepare the clip.",clipT:"Your clip is ready",dl:"Download",clipH:"On the published site the Download button saves the clip directly. If it does not, press and hold the video and choose Save.",cl:"Close",ms:"The music she loves while colouring",mo_off:"No music",mo_piano:"Soft piano",mo_oud:"Soft oud",mo_sea:"Sea waves",mo_rain:"Light rain",mo_file:"Her favourite song (upload a file)",sa:"A voice message or song clip for the last page (optional)",saN:"Plays for her when the last page opens, next to your message. Live recording works on the published site; if it does not, upload an audio file.",rec:"Record a voice message",recStop:"Stop recording",recOn:"Recording...",recNo:"Recording is not available here. Upload an audio file instead.",mOff:"Music: off",song:"A clip of her favourite song (optional)",songN:"Pick the music she loves. It plays while she colours and she can stop it. If you upload a song, make sure you have the right to use it.",brand:"Lawwenha",tMake:"I'm gifting",tPlay:"How she gets it",h1:"A colouring book of your own story, with a secret on the last page",sub:"Answer a few simple questions about your relationship and every page becomes a scene from your story to colour. She colours the book on screen, and the last page only opens once she finishes it, with your message inside.",to:"Her name",from:"Your name",sec:"Secret message (shown on the last page)",em:"Her email",go:"Prepare the book and see how she gets it",how:"How it works",s1:"Answer 6 questions about your story and write your secret message.",s2:"A book of 6 scenes to colour is prepared, with a line from your story under each.",s3:"A link reaches her email. She colours on her phone or prints it.",s4:"When she finishes colouring, the last page opens and your message appears.",demoNote:"This is a preview. Drawings here are made by code. The live version generates a fine-art drawing for each scene from your story details.",colors:"Colours",und:"Undo",rnd:"Colour it for me (demo)",clr:"Clear",prev:"Previous",next:"Next",foot:"Preview version. Colouring happens in your browser.",
- prog:function(p){return"You coloured "+Math.round(p*100)+"% of this page (50% is enough)"},lockT:"The last page is locked",lockP:function(n,t){return"Colour every scene to unlock it. You finished "+n+" of "+t},open:"Open the secret",cover:"From ",secTitle:"Last page",lang:"العربية",eraser:"Eraser",custom:"Custom colour",toLbl:function(t){return"For "+t},byLbl:function(f){return"Yours always, "+f},samples:{to:"Reem",from:"Khalid",sec:"Will you marry me, Reem?",q1:"A small café in Dubai Mall",q2:"When the coffee spilled on the table",q3:"The seafront at sunset",q4:"Your laugh and how you get excited",q5:"Moonlight",q6:"A little home whose walls we colour together"}}
+ar:{genT:function(n,t){return"جاري رسم المشهد "+n+" من "+t+"، نصف دقيقة تقريباً لكل مشهد"},mOn:"الموسيقى: تشغيل",introT:"كتاب تلوين خاص",introM:"صُنِعَتْ هٰذِهِ الهَدِيَّةُ لَك وَحْدَك",introB:"افتح هديتك",pay:"ادفع وأرسل الهدية",payNote:"بعد الدفع يوصل رابط الكتاب على البريد الإلكتروني مباشرة.",consent:"أوافق على",terms:"الشروط",privacy:"سياسة الخصوصية",and:"و",needEm:"اكتب البريد الإلكتروني في خانة «البريد الإلكتروني» في تبويب «أنا أهدي».",needConsent:"لازم توافق على الشروط وسياسة الخصوصية.",paying:"جاري التجهيز...",upl:function(i,n){return"جاري حفظ المشهد "+i+" من "+n},audOk:"الصوت جاهز ✓",aud30:"الملف أكبر من 30 ميجا. اختر ملفاً أصغر أو قصّ المقطع.",audP:"جاري تجهيز الصوت",capHint:"عند تلوين نص الرسمة تظهر هنا كلمة جميلة",audI:function(m,mb,big,long){return"مدة المقطع "+m+" وحجمه "+mb+" ميجا. "+(big?(long?"بنقص أول 90 ثانية ونضغطه تلقائياً الحين، انتظر لين يجهز.":"بنضغطه تلقائياً الحين، انتظر لين يجهز."):"حجمه مناسب.")+" (الحد الأقصى: 90 ثانية، والملف حتى 30 ميجا)"},audC:"جاري تجهيز الصوت (ضغط تلقائي، لا تغلق الصفحة)",bigAudio:"الصوت طويل أو كبير حتى بعد الضغط. اختر مقطعاً أقصر (90 ثانية أو أقل).",payFail:"تعذّر إكمال الطلب",doneWait:"جاري تأكيد الدفع...",doneT:"تم الدفع. كتابك في طريقه",doneEm:"أرسلنا الرابط إلى البريد الإلكتروني. وهذا رابط الكتاب لو حبيت ترسله بنفسك:",doneNoEm:"تم الدفع. هذا رابط الكتاب، أرسله له:",copy:"نسخ الرابط",copied:"تم النسخ",notFound:"الكتاب غير موجود أو لم يُدفع بعد.",cancelled:"تم إلغاء الدفع. تقدر تجرّب مرة ثانية.",pdf:"تحميل PDF للطباعة",pdfBusy:"جاري تجهيز ملف PDF...",pdfT:"كتاب تلوين خاص",sig:"سطر ختام تكتبه بنفسك (اختياري)",clip:"حمّل المقطع (الكتابة مع الصوت)",clipBusy:"جاري تجهيز المقطع، يستغرق مدة الصوت تقريباً. لا تغلق الصفحة.",clipNo:"المتصفح هذا لا يدعم تجهيز المقطع.",clipT:"مقطعك جاهز",dl:"تنزيل",clipH:"في الموقع المنشور زر «تنزيل» يحفظ المقطع مباشرة. إذا ما اشتغل، اضغط مطولاً على الفيديو واختر حفظ.",cl:"إغلاق",ms:"الموسيقى أثناء التلوين",mo_off:"بدون موسيقى",mo_soft:"موسيقى هادئة أثناء التلوين",sa:"رسالة صوتية أو مقطع أغنية للصفحة الأخيرة (اختياري)",saN:"تُشغَّل لما تنفتح الصفحة الأخيرة مع رسالتك. التسجيل المباشر يشتغل في الموقع بعد النشر، وإذا ما اشتغل ارفع ملف صوتي. الحد الأقصى للمقطع 90 ثانية، والملف حتى 30 ميجا، ويُضغط تلقائياً قبل الدفع.",rec:"سجّل رسالة صوتية",recStop:"أوقف التسجيل",recOn:"جاري التسجيل...",recNo:"التسجيل غير متاح هنا. ارفع ملفًا صوتيًا بدلاً منه.",mOff:"الموسيقى: إيقاف",song:"مقطع من أغنية مفضلة (اختياري)",songN:"تشتغل أثناء التلوين فقط، ويقدر يوقفها بزر الموسيقى، وتنطفئ تلقائياً في الصفحة الأخيرة.",brand:"لوّنها",tMake:"أنا أهدي",tPlay:"كيف تستلمه",h1:"كتاب تلوين من ذكرياتكم أنتم، وآخر صفحة فيه سر",sub:"تجاوب على أسئلة بسيطة عن علاقتكم، فكل صفحة تصير مشهد من ذكرياتكم للتلوين. الكتاب يتلوّن على الشاشة، وما تنفتح الصفحة الأخيرة إلا بعد ما يكتمل التلوين، وتظهر فيها رسالتك.",to:"اسم الشخص اللي تهديه",from:"اسمك",sec:"رسالة السر (تظهر في الصفحة الأخيرة)",em:"البريد الإلكتروني للمُهدى إليه",go:"جهّز الكتاب وشوف كيف يوصل",how:"كيف يشتغل",s1:"تجاوب على ٦ أسئلة عن ذكرياتكم، وتكتب رسالتك السرية.",s2:"يتجهّز كتاب من ٦ مشاهد مرسومة للتلوين، تحت كل مشهد جملة من ذكرياتكم.",s3:"يوصل رابط الكتاب على البريد الإلكتروني، ويتلوّن على الجوال.",s4:"لما يكتمل التلوين تنفتح الصفحة الأخيرة وتظهر رسالتك.",demoNote:"هذي نسخة تجريبية. الرسومات هنا مرسومة بالكود، وفي النسخة الفعلية تُولَّد رسمة فنية لكل مشهد من تفاصيل ذكرياتكم.",colors:"الألوان",und:"تراجع",rnd:"لوّنها لي (للتجربة)",clr:"مسح",prev:"السابقة",next:"التالية",foot:"التلوين يتم داخل متصفحك.",
+ prog:function(p){return"نسبة التلوين "+Math.round(p*100)+"% من هذي الصفحة (يكفي 50%)"},lockT:"الصفحة الأخيرة مقفلة",lockP:function(n,t){return"تنفتح بعد تلوين كل المشاهد. المنجز: "+n+" من "+t},open:"افتح السر",cover:"من ",secTitle:"الصفحة الأخيرة",lang:"English",eraser:"ممحاة",custom:"لون مخصص",toLbl:function(t){return"إِلَى "+t},byLbl:function(f){return"لكِ دائماً، "+f},samples:{to:"نور",from:"ريان",sec:"كل صفحة لوّنتها فيها شي منك، وكل لون فيها كان اسمك. شكراً إنك صرت أجمل ذكرياتي.",q1:"مقهى صغير في دبي مول",q2:"لما انسكبت القهوة على الطاولة",q3:"الكورنيش وقت الغروب",q4:"ضحكتك وحماسك",q5:"قمر",q6:"بيت صغير نلوّن حيطانه مع بعض"}},
+en:{genT:function(n,t){return"Drawing scene "+n+" of "+t+", about half a minute each"},mOn:"Music: on",introT:"A PERSONAL COLOURING BOOK",introM:"Made for you, and only you",introB:"Open your gift",pay:"Pay and send the gift",payNote:"After payment the book link reaches the email address right away.",consent:"I agree to the",terms:"Terms",privacy:"Privacy Policy",and:"and",needEm:"Enter the email in the \"Her email\" field on the \"I'm gifting\" tab.",needConsent:"You need to accept the Terms and Privacy Policy.",paying:"Preparing...",upl:function(i,n){return"Saving scene "+i+" of "+n},audOk:"Audio is ready ✓",aud30:"The file is over 30 MB. Pick a smaller file or trim the clip.",audP:"Preparing the audio",capHint:"Colour half of the picture and a few words will appear here",audI:function(m,mb,big,long){return"Length "+m+", size "+mb+" MB. "+(big?(long?"We will keep the first 90 seconds and compress it now, please wait until it is ready.":"It is being compressed now, please wait until it is ready."):"Size is fine.")+" (Max: 90 seconds, file up to 30 MB)"},audC:"Preparing the audio (auto-compressing, keep this page open)",bigAudio:"The audio is too long or large even after compression. Pick a clip of 90 seconds or less.",payFail:"Could not complete the order",doneWait:"Confirming payment...",doneT:"Paid. Your book is on its way",doneEm:"We emailed the link. Here it is if you want to send it yourself:",doneNoEm:"Paid. Here is the book link, send it to them:",copy:"Copy link",copied:"Copied",notFound:"This book does not exist or has not been paid for yet.",cancelled:"Payment cancelled. You can try again.",pdf:"Download print PDF",pdfBusy:"Preparing the PDF...",pdfT:"A personal colouring book",sig:"A closing line in your own words (optional)",clip:"Download the clip (message with audio)",clipBusy:"Preparing your clip, it takes about as long as the audio. Keep this page open.",clipNo:"This browser cannot prepare the clip.",clipT:"Your clip is ready",dl:"Download",clipH:"On the published site the Download button saves the clip directly. If it does not, press and hold the video and choose Save.",cl:"Close",ms:"Music while colouring",mo_off:"No music",mo_soft:"Calm music while colouring",sa:"A voice message or song clip for the last page (optional)",saN:"Plays when the last page opens, next to your message. Live recording works on the published site; if it does not, upload an audio file. Maximum 90 seconds, file up to 30 MB, compressed automatically before payment.",rec:"Record a voice message",recStop:"Stop recording",recOn:"Recording...",recNo:"Recording is not available here. Upload an audio file instead.",mOff:"Music: off",song:"A clip of a favourite song (optional)",songN:"Plays only while colouring, can be stopped with the music button, and switches off automatically on the last page.",brand:"Lawwenha",tMake:"I'm gifting",tPlay:"How it arrives",h1:"A colouring book of your own story, with a secret on the last page",sub:"Answer a few simple questions about your relationship and every page becomes a scene from your memories to colour. The book is coloured on screen, and the last page only opens once it is finished, with your message inside.",to:"Her name",from:"Your name",sec:"Secret message (shown on the last page)",em:"Her email",go:"Prepare the book and see how it arrives",how:"How it works",s1:"Answer 6 questions about your memories and write your secret message.",s2:"A book of 6 scenes to colour is prepared, with a line from your memories under each.",s3:"A link reaches the email address and the book is coloured on the phone.",s4:"When colouring is finished, the last page opens and your message appears.",demoNote:"This is a preview. Drawings here are made by code. The live version generates a fine-art drawing for each scene from your memories.",colors:"Colours",und:"Undo",rnd:"Colour it for me (demo)",clr:"Clear",prev:"Previous",next:"Next",foot:"Preview version. Colouring happens in your browser.",
+ prog:function(p){return"You coloured "+Math.round(p*100)+"% of this page (50% is enough)"},lockT:"The last page is locked",lockP:function(n,t){return"Colour every scene to unlock it. You finished "+n+" of "+t},open:"Open the secret",cover:"From ",secTitle:"Last page",lang:"العربية",eraser:"Eraser",custom:"Custom colour",toLbl:function(t){return"For "+t},byLbl:function(f){return"Yours always, "+f},samples:{to:"Noor",from:"Rayan",sec:"Every page you coloured holds something of you. Thank you for becoming my most beautiful memory.",q1:"A small café in Dubai Mall",q2:"When the coffee spilled on the table",q3:"The seafront at sunset",q4:"Your laugh and your excitement",q5:"Moonlight",q6:"A little home whose walls we colour together"}}
 };
 var PAL=["#D7263D","#F2547D","#FF9EB5","#F46036","#FFB703","#FFE066","#2E933C","#7BC950","#B5E48C","#0F8B8D","#4CC9F0","#2563EB","#1B2A6B","#7B2CBF","#B388EB","#8D2F5C","#8D6E63","#F1E3D3","#17152B","#FFFFFF"];
 var THEMES=[["#E85D8E","#FF9EB5","#FFB703","#7B2CBF","#B388EB","#FFE066"],["#D7263D","#F46036","#FFB703","#8D2F5C","#FF9EB5","#FFE066"],["#0F8B8D","#4CC9F0","#7BC950","#B388EB","#FF9EB5","#FFE066"]];
@@ -407,9 +433,18 @@ function render(){
   progress();
 }
 function doneCount(){var n=0;for(var i=0;i<book.scenes.length;i++)if(frac(i)>=TH)n++;return n}
+var capId=0;
+function capReset(){capId++;var P=pg[cur],c=$("cap");c.classList.toggle("hint",!P.capDone);c.textContent=P.capDone?book.scenes[cur].cap:S[lang].capHint}
+function capSync(){
+  if(cur>=book.scenes.length)return;var P=pg[cur];if(P.capDone||frac(cur)<TH)return;
+  P.capDone=true;var c=$("cap"),t=book.scenes[cur].cap,id=++capId,k=0;c.classList.remove("hint");c.textContent="";
+  var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(rm){c.textContent=t;return}
+  (function ty(){if(id!==capId)return;k++;c.textContent=t.slice(0,k);if(k<t.length)setTimeout(ty,55)})()
+}
 function progress(){
   var d=S[lang];
-  if(cur<book.scenes.length){var f=frac(cur);$("barI").style.width=Math.min(100,f/TH*100)+"%";$("progL").textContent=d.prog(f)}
+  if(cur<book.scenes.length){var f=frac(cur);$("barI").style.width=Math.min(100,f/TH*100)+"%";$("progL").textContent=d.prog(f);capSync()}
   drawNav();
 }
 function drawNav(){
@@ -428,7 +463,7 @@ function go(i){
   inReveal=last&&unlocked;if(inReveal&&Mus.on)stopMusic();updMus();
   $("page").hidden=last;$("lockp").hidden=!(last&&!unlocked);$("rev").hidden=!(last&&unlocked);$("tools").style.opacity=last?".6":"1";
   $("prev").disabled=cur===0;$("next").disabled=last;
-  if(!last){build(cur);$("cap").textContent=book.scenes[cur].cap;render()}
+  if(!last){build(cur);capReset();render()}
   else if(!unlocked){
     $("lockp").innerHTML='<div class="big">'+d.lockT+'</div><div class="lbl">'+d.lockP(doneCount(),n)+'</div>';progress();
   }else{showReveal();drawNav()}
@@ -484,7 +519,7 @@ function buildForm(keep){
 function makeBook(){
   readStyle();
   book={to:$("to").value.trim()||S[lang].samples.to,from:$("from").value.trim()||S[lang].samples.from,secret:$("sec").value.trim()||S[lang].samples.sec,sig:($("sig").value||"").trim(),scenes:[],raw:{}};
-  Q.forEach(function(q,i){var v=$(q.id).value.trim()||S[lang].samples[q.id];book.raw[q.id]=v;book.scenes.push({art:q.art,cap:q[lang].c(v),seed:i*31+7})});
+  Q.forEach(function(q,i){var v=$(q.id).value.trim()||S[lang].samples[q.id];book.raw[q.id]=v;book.raw.k=KIND;book.scenes.push({art:q.art,cap:q[lang].c(v),seed:i*31+7})});
   pg=[];wasUnlocked=false;
 }
 function showIntro(){
@@ -500,10 +535,19 @@ function showTab(p){
   if(p){if(!book)makeBook();buildPalette();go(Math.min(cur,book.scenes.length));if(!book._intro){book._intro=true;showIntro()}}
   updPay();
 }
+["ar","en"].forEach(function(l){var o={};["to","from","sec","em","introM","h1","sub","samples"].forEach(function(k){o[k]=S[l][k]});KS.love[l]=o});
+function setKind(k,keepVals){
+  if(!QS[k])k="love";KIND=k;Q=QS[k];
+  ["ar","en"].forEach(function(l){var o=KS[k][l];for(var x in o)S[l][x]=o[x]});
+  applyLang();buildForm(false);
+  if(!keepVals)["to","from","sec"].forEach(function(f){var e=$(f);if(e)e.value=S[lang].samples[f]});
+  document.querySelectorAll("#kinds [data-k]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.k===k?"true":"false")});
+}
 function applyLang(){
   var A=$("app"),d=S[lang];A.dir=lang==="ar"?"rtl":"ltr";A.lang=lang;
   document.querySelectorAll("[data-t]").forEach(function(e){var k=e.getAttribute("data-t");if(typeof d[k]==="string")e.textContent=d[k]});
   $("lang").textContent=d.lang;if(typeof updMus==="function")updMus();if(typeof refreshIntro==="function"&&book)refreshIntro();if($("rec")&&!(Sec.rec&&Sec.rec.state==="recording"))$("rec").textContent=d.rec;document.title=lang==="ar"?"لوّنها":"Lawwenha";
+  document.querySelectorAll("#kinds [data-k]").forEach(function(b){b.textContent=KT[lang][b.dataset.k]});
 }
 function genScenes(done){
   var n=book.scenes.length,fin=0,next=0,run=0;$("make").hidden=true;$("gen").hidden=false;
@@ -511,7 +555,7 @@ function genScenes(done){
   tick();
   function one(i){
     var sc=book.scenes[i];
-    return fetch("/api/scene",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idx:i,answer:book.raw[Q[i].id],lang:lang})})
+    return fetch("/api/scene",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idx:i,answer:book.raw[Q[i].id],lang:lang,kind:KIND})})
       .then(function(r){return r.json()}).then(function(j){return new Promise(function(res){if(!j.image)return res();sc.src=j.image;var im=new Image();im.onload=function(){sc.img=im;res()};im.onerror=function(){res()};im.src=j.image})})
       .catch(function(){}).then(function(){fin++;tick()});
   }
@@ -537,70 +581,18 @@ $("lang").onclick=function(){
 try{fetch("/api/scene").then(function(r){return r.json()}).then(function(j){if(j&&j.ready)AI=true}).catch(function(){})}catch(e){}
 
 var inReveal=false;
-var Mus={on:false,ctx:null,timer:null,audio:null,url:null,userOff:false,style:"off",master:null,nodes:[]};
+var Mus={on:false,audio:null,userOff:false,style:"off"};
+var TRACK="/audio/sunny-morning-garden.mp3";
 function updMus(){var b=$("mus"),d=S[lang];if(!b)return;b.hidden=Mus.style==="off"||inReveal;b.textContent=Mus.on?d.mOn:d.mOff;b.setAttribute("aria-pressed",Mus.on?"true":"false")}
-function readStyle(){var e=$("ms");Mus.style=e?e.value:"off";var f=$("song");if(f)f.hidden=Mus.style!=="file"}
-function graph(vol){
-  var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
-  var c=Mus.ctx=new AC();if(c.state==="suspended")c.resume();
-  var master=Mus.master=c.createGain();master.gain.value=0;master.connect(c.destination);master.gain.linearRampToValueAtTime(vol,c.currentTime+2.5);
-  var tone=c.createBiquadFilter();tone.type="lowpass";tone.frequency.value=3800;tone.connect(master);
-  var len=Math.floor(c.sampleRate*2.2),ir=c.createBuffer(2,len,c.sampleRate),ch,i;
-  for(ch=0;ch<2;ch++){var d=ir.getChannelData(ch);for(i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
-  var cv2=c.createConvolver();cv2.buffer=ir;var wet=c.createGain();wet.gain.value=.36;tone.connect(cv2);cv2.connect(wet);wet.connect(master);
-  return{c:c,tone:tone,master:master};
-}
-function noiseSrc(c){
-  var len=c.sampleRate*4,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0),i,last=0;
-  for(i=0;i<len;i++){var w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.2}
-  var s=c.createBufferSource();s.buffer=buf;s.loop=true;return s;
-}
-function startPiano(){
-  var G=graph(.3);if(!G)return;var c=G.c;
-  function piano(m,t,dur,vel){
-    var f=440*Math.pow(2,(m-69)/12),amps=[1,.5,.26,.14,.07],k;
-    for(k=0;k<amps.length;k++){var o=c.createOscillator(),g=c.createGain(),h=k+1;o.type="sine";o.frequency.value=f*h*(1+(Math.random()-.5)*.0008);
-      var peak=vel*amps[k]*.22/(1+k*.4),dk=dur/(1+k*.55);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+.008);g.gain.exponentialRampToValueAtTime(.0002,t+.008+dk);o.connect(g);g.connect(G.tone);o.start(t);o.stop(t+dk+.1)}
-  }
-  var bars=[{b:45,a:[57,60,64],m:[[0,76,4],[4,72,2],[6,74,2]]},{b:41,a:[57,60,65],m:[[0,72,3],[3,74,1],[4,76,4]]},{b:48,a:[55,60,64],m:[[0,79,4],[4,76,2],[6,72,2]]},{b:43,a:[55,59,62],m:[[0,74,4],[4,71,2],[6,74,2]]},{b:45,a:[57,60,64],m:[[0,76,2],[2,81,2],[4,79,2],[6,76,2]]},{b:38,a:[57,62,65],m:[[0,77,4],[4,74,2],[6,77,2]]},{b:40,a:[56,59,64],m:[[0,80,4],[4,76,2],[6,71,2]]},{b:45,a:[57,60,64],m:[[0,76,2],[2,72,2],[4,69,4]]}],
-  e8=60/66/2,pat=[null,0,1,2,1,2,1,0],step=0,tn=c.currentTime+.2;
-  function sched(){while(tn<c.currentTime+2.5){var B=bars[step%bars.length],j;piano(B.b,tn,4.2,.9);piano(B.b+12,tn,3,.35);
-    for(j=1;j<8;j++)piano(B.a[pat[j]],tn+j*e8+(Math.random()-.5)*.02,2.4,.38+Math.random()*.1);
-    B.m.forEach(function(n){piano(n[1],tn+n[0]*e8+(Math.random()-.5)*.025,Math.min(4.5,n[2]*e8*1.6+1.4),.8+Math.random()*.15)});tn+=8*e8;step++}}
-  sched();Mus.timer=setInterval(sched,500);
-}
-function startOud(){
-  var G=graph(.34);if(!G)return;var c=G.c;
-  function pluck(m,t,dur,vel){
-    var f=440*Math.pow(2,(m-69)/12),o=c.createOscillator(),o2=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain();
-    o.type="sawtooth";o2.type="triangle";o.frequency.setValueAtTime(f*1.012,t);o.frequency.exponentialRampToValueAtTime(f,t+.06);o2.frequency.value=f*2;
-    fl.type="lowpass";fl.frequency.setValueAtTime(3200,t);fl.frequency.exponentialRampToValueAtTime(420,t+.5);fl.Q.value=1.2;
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*.16,t+.004);g.gain.exponentialRampToValueAtTime(.0002,t+dur);
-    o.connect(fl);o2.connect(fl);fl.connect(g);g.connect(G.tone);o.start(t);o2.start(t);o.stop(t+dur+.1);o2.stop(t+dur+.1);
-  }
-  var bars=[[[0,69,2],[2,70,1],[3,69,1],[4,67,3],[7,66,1]],[[0,67,2],[2,66,2],[4,63,2],[6,62,2]],[[0,62,1],[1,63,1],[2,66,2],[4,67,2],[6,69,2]],[[0,70,3],[3,69,1],[4,67,2],[6,66,2]],[[0,69,2],[2,74,2],[4,72,2],[6,70,2]],[[0,69,2],[2,67,2],[4,66,3],[7,67,1]],[[0,63,2],[2,66,2],[4,67,2],[6,66,2]],[[0,62,8]]],
-  e8=60/72/2,step=0,tn=c.currentTime+.2;
-  function sched(){while(tn<c.currentTime+2.5){var B=bars[step%bars.length];
-    pluck(50,tn,3.2,.9);pluck(50,tn+4*e8,2.6,.6);pluck(57,tn+6*e8,2.2,.4);
-    B.forEach(function(n){pluck(n[1],tn+n[0]*e8+(Math.random()-.5)*.02,Math.min(3.4,n[2]*e8*1.5+.9),.8+Math.random()*.2)});tn+=8*e8;step++}}
-  sched();Mus.timer=setInterval(sched,500);
-}
-function startNoise(kind){
-  var G=graph(kind==="sea"?.5:.3);if(!G)return;var c=G.c,n=noiseSrc(c),f=c.createBiquadFilter(),g=c.createGain(),lfo=c.createOscillator(),lg=c.createGain();
-  if(kind==="sea"){f.type="lowpass";f.frequency.value=700;g.gain.value=.5;lfo.frequency.value=.09;lg.gain.value=.38}
-  else{f.type="bandpass";f.frequency.value=4200;f.Q.value=.5;g.gain.value=.55;lfo.frequency.value=.3;lg.gain.value=.08}
-  lfo.connect(lg);lg.connect(g.gain);n.connect(f);f.connect(g);g.connect(G.master);n.start();lfo.start();
-}
+function readStyle(){var e=$("ms");Mus.style=e&&e.value==="soft"?"soft":"off"}
 function startMusic(){
   if(Mus.on||inReveal)return;readStyle();if(Mus.style==="off")return;Mus.on=true;
-  if(Mus.style==="file"){if(Mus.url){if(!Mus.audio){Mus.audio=new Audio(Mus.url);Mus.audio.loop=true;Mus.audio.volume=.6}Mus.audio.play().catch(function(){})}}
-  else if(Mus.style==="piano")startPiano();else if(Mus.style==="oud")startOud();else startNoise(Mus.style);
-  updMus();
+  if(!Mus.audio){Mus.audio=new Audio(TRACK);Mus.audio.loop=true;Mus.audio.volume=.5;Mus.audio.preload="auto"}
+  Mus.audio.play().catch(function(){});updMus();
 }
 function stopMusic(){
-  Mus.on=false;if(Mus.audio)Mus.audio.pause();
-  if(Mus.timer){clearInterval(Mus.timer);Mus.timer=null}
-  if(Mus.ctx){var c=Mus.ctx,m=Mus.master;Mus.ctx=null;try{m.gain.cancelScheduledValues(c.currentTime);m.gain.setValueAtTime(m.gain.value,c.currentTime);m.gain.linearRampToValueAtTime(0,c.currentTime+.8)}catch(e){}setTimeout(function(){try{c.close()}catch(e){}},1000)}
+  Mus.on=false;var a=Mus.audio;
+  if(a){var v=a.volume,k=0,iv=setInterval(function(){k++;a.volume=Math.max(0,v*(1-k/8));if(k>=8){clearInterval(iv);a.pause();a.volume=v}},90)}
   updMus();
 }
 var armed=false;
@@ -613,22 +605,17 @@ $("mus").onclick=function(){
   if(Mus.on){Mus.userOff=true;stopMusic()}else{Mus.userOff=false;startMusic()}
 };
 $("ms").addEventListener("change",function(){
-  var was=Mus.on;if(was)stopMusic();readStyle();Mus.userOff=false;updMus();if(was&&Mus.style!=="off")setTimeout(startMusic,1100)
+  var was=Mus.on;readStyle();Mus.userOff=false;if(Mus.style==="off"){if(was)stopMusic();updMus()}else{updMus();if(!was&&!$("play").hidden)startMusic()}
 });
-$("song").addEventListener("change",function(){
-  var f=this.files&&this.files[0];if(!f)return;
-  if(Mus.url){try{URL.revokeObjectURL(Mus.url)}catch(e){}}
-  Mus.url=URL.createObjectURL(f);if(Mus.audio){Mus.audio.pause();Mus.audio=null}
-  if(Mus.on){stopMusic();setTimeout(startMusic,1100)}
-});
+try{if(document.fonts&&document.fonts.load)["700 72px \"Aref Ruqaa\"","700 62px \"Aref Ruqaa Ink\"","400 40px \"Amiri\""].forEach(function(f){document.fonts.load(f,"ابتثجح")})}catch(e){}
 var Sec={url:null,rec:null,chunks:[]};
 function duck(on){
-  try{if(Mus.master&&Mus.ctx)Mus.master.gain.linearRampToValueAtTime(on?.08:.3,Mus.ctx.currentTime+.6);if(Mus.audio)Mus.audio.volume=on?.15:.6}catch(e){}
+  try{if(Mus.audio)Mus.audio.volume=on?.12:.5}catch(e){}
 }
 (function(){
   var au=$("rAud");au.addEventListener("play",function(){duck(true)});au.addEventListener("pause",function(){duck(false)});au.addEventListener("ended",function(){duck(false)});
   function setSec(u){if(Sec.url&&Sec.url!==u){try{URL.revokeObjectURL(Sec.url)}catch(e){}}Sec.url=u;var p=$("sap");p.src=u;p.hidden=false}
-  $("sa").addEventListener("change",function(){var f=this.files&&this.files[0];if(f){setSec(URL.createObjectURL(f));$("recS").textContent=""}});
+  $("sa").addEventListener("change",function(){var f=this.files&&this.files[0];if(f){if(f.size>30e6){this.value="";$("audInfo").textContent=S[lang].aud30;return}setSec(URL.createObjectURL(f));$("recS").textContent="";audInfo(f);startAudioPrep()}else audInfo(null)});
   $("rec").onclick=function(){
     var d=S[lang],st=$("recS");
     if(Sec.rec&&Sec.rec.state==="recording"){Sec.rec.stop();return}
@@ -662,16 +649,32 @@ function duck(on){
     for(i=0;i<22;i++)hs.push({x:Math.random()*cw,y:chh+Math.random()*chh,s:10+Math.random()*18,v:.8+Math.random()*1.6});
     function frame(){
       if(stopped)return;var t=performance.now()-t0;
-      var g=x.createLinearGradient(0,0,0,chh);g.addColorStop(0,"#3A0D2A");g.addColorStop(1,"#1B0A25");x.fillStyle=g;x.fillRect(0,0,cw,chh);
-      x.fillStyle="rgba(243,150,185,.5)";
-      hs.forEach(function(h){h.y-=h.v;if(h.y<-30){h.y=chh+20;h.x=Math.random()*cw}x.save();x.translate(h.x,h.y);x.scale(h.s/10,h.s/10);x.beginPath();x.moveTo(0,9);x.bezierCurveTo(-13,-1,-6,-10,0,-4);x.bezierCurveTo(6,-10,13,-1,0,9);x.fill();x.restore()});
-      x.textAlign="center";x.textBaseline="middle";x.fillStyle="#F3C6D6";x.direction=isAr(book.to)?"rtl":"ltr";x.font="500 40px "+(isAr(book.to)?FA:FL);x.fillText(d.toLbl(book.to),cw/2,360);
+      var g=x.createRadialGradient(cw/2,chh*.25,60,cw/2,chh*.4,chh*.9);g.addColorStop(0,"#5A1436");g.addColorStop(.55,"#2B0A1E");g.addColorStop(1,"#14060F");x.fillStyle=g;x.fillRect(0,0,cw,chh);
+      var gold=x.createLinearGradient(0,0,cw,chh);gold.addColorStop(0,"#8A6420");gold.addColorStop(.25,"#F6DE9A");gold.addColorStop(.5,"#B98B2E");gold.addColorStop(.75,"#F6DE9A");gold.addColorStop(1,"#8A6420");
+      x.fillStyle="rgba(246,222,154,.55)";
+      hs.forEach(function(h){h.y-=h.v*.6;if(h.y<-30){h.y=chh+20;h.x=Math.random()*cw}x.save();x.translate(h.x,h.y);x.scale(h.s/12,h.s/12);x.beginPath();x.moveTo(0,-10);x.quadraticCurveTo(1,-1,10,0);x.quadraticCurveTo(1,1,0,10);x.quadraticCurveTo(-1,1,-10,0);x.quadraticCurveTo(-1,-1,0,-10);x.fill();x.restore()});
+      /* card frame */
+      x.save();x.strokeStyle=gold;x.lineWidth=7;x.strokeRect(34,34,cw-68,chh-68);
+      x.lineWidth=2;x.strokeRect(54,54,cw-108,chh-108);
+      x.strokeStyle="rgba(201,162,75,.6)";x.lineWidth=2;x.setLineDash([2,8]);x.strokeRect(72,72,cw-144,chh-144);x.setLineDash([]);
+      [[34,34,1,1],[cw-34,34,-1,1],[34,chh-34,1,-1],[cw-34,chh-34,-1,-1]].forEach(function(c){
+        x.save();x.translate(c[0],c[1]);x.scale(c[2],c[3]);x.strokeStyle=gold;x.fillStyle=gold;
+        x.lineWidth=3.5;x.beginPath();x.arc(0,0,112,0,Math.PI/2);x.stroke();
+        x.lineWidth=2;x.beginPath();x.arc(0,0,82,0,Math.PI/2);x.stroke();
+        x.beginPath();x.arc(124,10,5,0,7);x.fill();x.beginPath();x.arc(10,124,5,0,7);x.fill();
+        x.restore()});
+      x.restore();
+      x.textAlign="center";x.textBaseline="middle";
+      x.fillStyle=gold;x.direction=ar?"rtl":"ltr";x.font="400 38px "+(ar?'"Amiri",'+FA:FL);x.fillText(d.introM,cw/2,250);
+      x.strokeStyle=gold;x.lineWidth=2;x.beginPath();x.moveTo(190,310);x.lineTo(320,310);x.moveTo(400,310);x.lineTo(530,310);x.stroke();
+      x.save();x.translate(cw/2,310);x.rotate(Math.PI/4);x.strokeRect(-9,-9,18,18);x.restore();
+      x.fillStyle=gold;x.direction=isAr(book.to)?"rtl":"ltr";x.font="700 62px "+(isAr(book.to)?'"Aref Ruqaa Ink","Aref Ruqaa",'+FA:FL);x.fillText(d.toLbl(book.to),cw/2,400);
       var n=Math.min(msg.length,Math.floor(t/70)),shown=msg.slice(0,n);
-      x.fillStyle="#FFF3F6";x.direction=ar?"rtl":"ltr";x.font="700 70px "+fam;
-      var full=wrapT(x,msg,600),lh=104,y0=640-(full.length-1)*lh/2,used=0;
+      x.fillStyle="#F8E7B6";x.direction=ar?"rtl":"ltr";var fs=msg.length>90?50:msg.length>60?58:72;x.font="700 "+fs+"px "+(ar?'"Aref Ruqaa","Aref Ruqaa Ink",'+fam:fam);
+      var full=wrapT(x,msg,580),lh=Math.round(fs*1.45),y0=690-(full.length-1)*lh/2,used=0;
       full.forEach(function(l,k){var take=Math.max(0,Math.min(l.length,n-used));used+=l.length+1;if(take>0)x.fillText(l.slice(0,take),cw/2,y0+k*lh)});
-      x.fillStyle="#F3C6D6";x.direction=isAr(book.from)?"rtl":"ltr";x.font="500 44px "+(isAr(book.from)?FA:FL);x.fillText(book.sig,cw/2,930);
-      x.direction="ltr";x.fillStyle="rgba(243,198,214,.55)";x.font="400 26px "+FL;x.fillText("Lawwenha · لوّنها",cw/2,1200);
+      x.fillStyle="#E8C874";x.direction=isAr(book.from)?"rtl":"ltr";x.font="400 48px "+(isAr(book.from)?'"Amiri",'+FA:FL);x.fillText(book.sig,cw/2,980);
+      x.direction="ltr";x.fillStyle="rgba(232,200,116,.7)";x.font="400 26px "+FL;x.fillText("Lawwenha · لوّنها",cw/2,1150);
       if(t>=maxMs)return stop();
       requestAnimationFrame(frame);
     }
@@ -691,7 +694,45 @@ function duck(on){
 var payReady=false;
 function updPay(){var pb=$("payBar");if(pb)pb.hidden=!(payReady&&!RECV&&!$("play").hidden)}
 try{fetch("/api/checkout").then(function(r){return r.json()}).then(function(j){if(j&&j.ready){payReady=true;updPay()}}).catch(function(){})}catch(e){}
-function jpost(url,b){return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||("http "+r.status));return j})})}
+function jpost(url,b){
+  var ac=window.AbortController?new AbortController():null,tm=ac?setTimeout(function(){ac.abort()},90000):0;
+  return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b),signal:ac?ac.signal:undefined}).then(function(r){
+    return r.text().then(function(t){var j={};try{j=JSON.parse(t)}catch(e){}
+      if(!r.ok)throw new Error(j.error||(r.status===413?"too_large":"http "+r.status));return j})
+  },function(e){throw new Error(e&&e.name==="AbortError"?"timeout":"network")}).then(function(j){clearTimeout(tm);return j},function(e){clearTimeout(tm);throw e})
+}
+function shrinkScene(du){
+  return new Promise(function(res){
+    if(du.length*.75<2.4e6)return res(du);
+    var im=new Image();im.onload=function(){
+      var sizes=[1400,1200,1024,900,768],k=0,out=du;
+      (function step(){var m=Math.max(im.naturalWidth,im.naturalHeight),z=Math.min(sizes[k],m),r=z/m,c=document.createElement("canvas");
+        c.width=Math.round(im.naturalWidth*r);c.height=Math.round(im.naturalHeight*r);var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+        out=c.toDataURL("image/png");if(out.length*.75<2.4e6||++k>=sizes.length)res(out);else step()})()
+    };im.onerror=function(){res(du)};im.src=du
+  })
+}
+function compressAudio(url,onTick){
+  return fetch(url).then(function(r){return r.blob()}).then(function(bl){
+    if(bl.size<2.4e6)return toData(url);
+    var AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC||!window.MediaRecorder)throw new Error("big");
+    var mt=["audio/webm;codecs=opus","audio/webm","audio/mp4"].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0];
+    if(!mt)throw new Error("big");
+    return bl.arrayBuffer().then(function(ab){
+      var ctx=new AC();return new Promise(function(ok,no){ctx.decodeAudioData(ab,ok,no)}).then(function(buf){
+        var maxS=Math.min(buf.duration,90),dest=ctx.createMediaStreamDestination(),src=ctx.createBufferSource();src.buffer=buf;src.connect(dest);
+        var rec=new MediaRecorder(dest.stream,{mimeType:mt,audioBitsPerSecond:40000}),parts=[];
+        rec.ondataavailable=function(e){if(e.data&&e.data.size)parts.push(e.data)};
+        return new Promise(function(done){
+          rec.onstop=function(){ctx.close&&ctx.close();done(new Blob(parts,{type:mt.split(";")[0]}))};
+          var t0=Date.now(),iv=setInterval(function(){onTick&&onTick(Math.min(99,Math.round((Date.now()-t0)/10/maxS)))},500);
+          rec.start();src.start();setTimeout(function(){clearInterval(iv);try{src.stop()}catch(e){}rec.stop()},maxS*1000+300)
+        })
+      })
+    }).then(function(out){if(out.size>2.8e6)throw new Error("big");return new Promise(function(res){var fr=new FileReader();fr.onload=function(){res(String(fr.result))};fr.readAsDataURL(out)})})
+  })
+}
 function toData(u){return fetch(u).then(function(r){return r.blob()}).then(function(b){return new Promise(function(res){var fr=new FileReader();fr.onload=function(){res(String(fr.result).replace(/^data:([^;,]+)[^,]*;base64,/,"data:$1;base64,"))};fr.readAsDataURL(b)})})}
 function sceneData(i){build(i);var sc=book.scenes[i];if(sc.src&&/^data:/.test(sc.src))return sc.src;var c=document.createElement("canvas");c.width=c.height=W;var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,W,W);x.drawImage(pg[i].art,0,0);return c.toDataURL("image/png")}
 $("pay").onclick=function(){
@@ -699,16 +740,32 @@ $("pay").onclick=function(){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){st.textContent=d.needEm;return}
   if(!$("consent").checked){st.textContent=d.needConsent;return}
   btn.disabled=true;st.textContent=d.paying;
-  jpost("/api/book",{action:"create",lang:lang,to:book.to,from:book.from,secret:book.secret,sig:book.sig,email:em,answers:book.raw,style:Mus.style==="file"?"off":Mus.style}).then(function(j){
+  jpost("/api/book",{action:"create",lang:lang,to:book.to,from:book.from,secret:book.secret,sig:book.sig,email:em,answers:book.raw,style:Mus.style}).then(function(j){
     id=j.id;key=j.key;try{localStorage.setItem("lw_key_"+id,key)}catch(e){}
     chain=Promise.resolve();
-    [0,1,2,3,4,5].forEach(function(i){chain=chain.then(function(){st.textContent=d.upl(i+1,6);return jpost("/api/book?id="+id+"&key="+key+"&kind=scene&idx="+i,{image:sceneData(i)})})});
+    [0,1,2,3,4,5].forEach(function(i){chain=chain.then(function(){st.textContent=d.upl(i+1,6);return shrinkScene(sceneData(i)).then(function(img){return jpost("/api/book?id="+id+"&key="+key+"&kind=scene&idx="+i,{image:img})})})});
     return chain;
   }).then(function(){
     if(!Sec.url)return;
-    return toData(Sec.url).then(function(du){if(du.length>4.3e6)throw new Error(d.bigAudio);return jpost("/api/book?id="+id+"&key="+key+"&kind=audio",{audio:du})});
+    st.textContent=d.audC;return audioReady().catch(function(){throw new Error(d.bigAudio)}).then(function(du){if(du.length>4.3e6)throw new Error(d.bigAudio);return jpost("/api/book?id="+id+"&key="+key+"&kind=audio",{audio:du})});
   }).then(function(){return jpost("/api/checkout",{id:id,key:key})}).then(function(j){location.href=j.url}).catch(function(e){btn.disabled=false;st.textContent=d.payFail+" ("+e.message+")"});
 };
+var audJob=null;
+function audTick(pc){var el=$("audInfo");if(el)el.textContent=S[lang].audP+" "+pc+"%"}
+function startAudioPrep(){
+  if(!Sec.url)return;var u=Sec.url,j={url:u};audJob=j;
+  j.p=compressAudio(u,function(pc){if(audJob===j)audTick(pc)});
+  j.p.then(function(){if(audJob===j){var el=$("audInfo");if(el)el.textContent=S[lang].audOk}},function(){if(audJob===j){var el=$("audInfo");if(el)el.textContent=S[lang].bigAudio}})
+}
+function audioReady(){if(audJob&&audJob.url===Sec.url)return audJob.p;return compressAudio(Sec.url,audTick)}
+function audInfo(f){
+  var el=$("audInfo"),d=S[lang];if(!el)return;if(!f){el.textContent="";return}
+  var mb=(f.size/1e6).toFixed(1),u=URL.createObjectURL(f),a=new Audio();a.preload="metadata";
+  function say(sec){var m=isFinite(sec)?Math.floor(sec/60)+":"+("0"+Math.floor(sec%60)).slice(-2):"?";
+    el.textContent=d.audI(m,mb,f.size>2.6e6,isFinite(sec)&&sec>120)}
+  a.onloadedmetadata=function(){say(a.duration);URL.revokeObjectURL(u)};a.onerror=function(){say(NaN)};a.src=u
+}
+
 function qs(n){try{return new URLSearchParams(location.search).get(n)}catch(e){return null}}
 function showDone(t,p,link){
   var d=S[lang];$("make").hidden=true;$("done").hidden=false;$("doneT").textContent=t;$("doneP").textContent=p||"";
@@ -727,9 +784,10 @@ function loadRecipient(id){
   fetch("/api/book?id="+encodeURIComponent(id)).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error("nf");return j})}).then(function(j){
     lang=j.lang==="en"?"en":"ar";applyLang();buildForm(false);
     book={to:j.to,from:j.from,secret:j.secret,sig:j.sig||"",scenes:[],raw:j.answers||{}};
+    setKind(book.raw.k||"love",true);
     Q.forEach(function(qq,i){book.scenes.push({art:qq.art,cap:qq[lang].c(book.raw[qq.id]||""),seed:i*31+7,src:j.scenes[i]})});
     if(j.audio)Sec.url=j.audio;
-    var st=["piano","oud","sea","rain"].indexOf(j.style)>=0?j.style:"off";$("ms").value=st;readStyle();
+    var st=j.style&&j.style!=="off"?"soft":"off";$("ms").value=st;readStyle();
     return Promise.all(j.scenes.map(function(u,i){return new Promise(function(res){var im=new Image();im.crossOrigin="anonymous";im.onload=function(){book.scenes[i].img=im;res()};im.onerror=function(){res()};im.src=u})}));
   }).then(function(){pg=[];cur=0;showTab(true)}).catch(function(){showDone(S[lang].notFound,"")});
 }
@@ -758,6 +816,7 @@ $("pdf").onclick=function(){
     st.textContent="";doc.save("lawwenha-book.pdf");
   }).catch(function(){st.textContent=d.payFail});
 };
+document.querySelectorAll("#kinds [data-k]").forEach(function(b){b.onclick=function(){setKind(b.dataset.k)}});
 applyLang();buildForm(false);$("to").value=S.ar.samples.to;$("from").value=S.ar.samples.from;$("sec").value=S.ar.samples.sec;
 (function(){var m=location.pathname.match(/\/b\/([0-9a-f-]{36})/i),bid=m?m[1]:qs("b");if(qs("paid")&&qs("id"))handlePaid();else if(bid)loadRecipient(bid);else if(qs("cancel")){showDone(S[lang].cancelled,"");$("make").hidden=false}})();
 })();
