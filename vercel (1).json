@@ -1,0 +1,23 @@
+{
+  "cleanUrls": true,
+  "functions": {
+    "api/scene.js": {
+      "maxDuration": 60
+    },
+    "api/checkout.js": {
+      "maxDuration": 30
+    },
+    "api/book.js": {
+      "maxDuration": 30
+    },
+    "api/verify.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/b/:id",
+      "destination": "/index.html"
+    }
+  ]
+}
